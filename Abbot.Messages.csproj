@@ -4,7 +4,7 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <CodeAnalysisRuleSet>../CodeAnalysisRuleset.xml</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>CodeAnalysisRuleset.xml</CodeAnalysisRuleSet>
         <RootNamespace>Serious.Abbot.Messages</RootNamespace>
         <AssemblyName>Abbot.Messages</AssemblyName>
     </PropertyGroup>
