@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Auth_Message" xml:space="preserve">
+        <value>
+            Please visit {0} to generate an authentication token. I will attempt to open your browser for you.
+        </value>
+    </data>
+    <data name="Initialized_Abbot_Directory" xml:space="preserve">
+        <value>Initialized an Abbot Skill Development Environment in {0}</value>
+    </data>
+    <data name="Directory_Does_Not_Exist" xml:space="preserve">
+        <value>The directory {0} does not exist.</value>
+    </data>
+    <data name="Directory_Is_Not_Abbot_Development_Enviroment" xml:space="preserve">
+        <value>The directory {0} is not an Abbot Skill development environment.
+Run `abbot init {1}` to initialize the directory.</value>
+    </data>
+    <data name="Abbot_Directory_Not_Authenticated" xml:space="preserve">
+        <value>The directory {0} is an unauthenticated Abbot Skill development environment.
+Run `abbot auth {1}` to authenticate this directory to your Abbot account.</value>
+    </data>
+</root>

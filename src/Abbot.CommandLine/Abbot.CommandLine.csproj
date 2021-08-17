@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
+        <RuntimeIdentifier>osx.10.12-x64</RuntimeIdentifier>
+        <PublishSingleFile>true</PublishSingleFile>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        <PublishTrimmed>true</PublishTrimmed>
+        <TrimMode>Link</TrimMode>
+        <SelfContained>true</SelfContained>
+        <LangVersion>preview</LangVersion>
+        <AssemblyName>abbot</AssemblyName>
+        <RootNamespace>Serious.Abbot.CommandLine</RootNamespace>
+        <Nullable>enable</Nullable>
+        <CodeAnalysisRuleSet>../../CodeAnalysisRuleset.xml</CodeAnalysisRuleSet>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="5.0.9" />
+      <PackageReference Include="Microsoft.AspNetCore.DataProtection.Abstractions" Version="5.0.9" />
+      <PackageReference Include="Microsoft.AspNetCore.DataProtection.Extensions" Version="5.0.9" />
+      <PackageReference Include="Refit" Version="6.0.94" />
+      <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Messages.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Messages.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Messages.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Abbot.Messages\Abbot.Messages.csproj" />
+    </ItemGroup>
+</Project>

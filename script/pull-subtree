@@ -1,0 +1,8 @@
+#! /bin/sh
+
+# Set up remote if it doesn't exist.
+git config remote.abbot-api-messages.url >&- || git remote add abbot-api-messages https://github.com/aseriousbiz/abbot-api-messages.git
+
+# Pull changes from https://github.com/aseriousbiz/abbot-api-messages
+
+git subtree pull --prefix src/Abbot.Messages abbot-api-messages main
