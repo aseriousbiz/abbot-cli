@@ -7,6 +7,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{65895949-768
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abbot.CommandLine", "src\Abbot.CommandLine\Abbot.CommandLine.csproj", "{A519EBE0-83F2-4467-9C93-FC2C0FBE7FBC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Abbot.Messages", "src\Abbot.Messages\Abbot.Messages.csproj", "{15AEEED6-4A2A-44DD-B573-D40E9F17E349}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_meta", "_meta", "{D454582B-27E5-4A07-AB72-1AE126B8DA3D}"
+ProjectSection(SolutionItems) = preProject
+	README.md = README.md
+EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{B17483F4-A48F-4770-A6C1-E7807FCEFABF}"
+ProjectSection(SolutionItems) = preProject
+	script\pull-subtree = script\pull-subtree
+	script\push-subtree = script\push-subtree
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +45,21 @@ Global
 		{A519EBE0-83F2-4467-9C93-FC2C0FBE7FBC}.Release|x64.Build.0 = Release|Any CPU
 		{A519EBE0-83F2-4467-9C93-FC2C0FBE7FBC}.Release|x86.ActiveCfg = Release|Any CPU
 		{A519EBE0-83F2-4467-9C93-FC2C0FBE7FBC}.Release|x86.Build.0 = Release|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Debug|x64.Build.0 = Debug|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Debug|x86.Build.0 = Debug|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Release|x64.ActiveCfg = Release|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Release|x64.Build.0 = Release|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Release|x86.ActiveCfg = Release|Any CPU
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A519EBE0-83F2-4467-9C93-FC2C0FBE7FBC} = {65895949-768B-4BBD-9912-ADC6A2A972A7}
+		{15AEEED6-4A2A-44DD-B573-D40E9F17E349} = {65895949-768B-4BBD-9912-ADC6A2A972A7}
 	EndGlobalSection
 EndGlobal

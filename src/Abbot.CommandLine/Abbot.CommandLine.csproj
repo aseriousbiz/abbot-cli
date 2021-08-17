@@ -12,7 +12,7 @@
         <AssemblyName>abbot</AssemblyName>
         <RootNamespace>Serious.Abbot.CommandLine</RootNamespace>
         <Nullable>enable</Nullable>
-        <CodeAnalysisRuleSet>../../CodeAnalysisRuleset.xml</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>CodeAnalysisRuleset.xml</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>

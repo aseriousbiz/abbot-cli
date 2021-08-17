@@ -48,3 +48,12 @@ The directory /Users/haacked/my-skills is an authenticated Abbot Skill Developme
 Organization: Serious Business (Slack T0123456)
 User: Phil Haack (U0123456)
 ```
+
+## Development
+
+This is a .NET 5 Console project.
+
+The `Abbot.Messages` project is in a [Git Subtree](https://www.atlassian.com/git/tutorials/git-subtree). For the most part, you shouldn't have to worry about it.
+However, if you make changes to `Abbot.Messages` from here, you'll want to push those changes upstream via `script/push-subtree`.
+
+If for some reason changes were made directly to `Abbot.Messages`, you can pull those changes via `script/pull-subtree`.
