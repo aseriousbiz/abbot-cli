@@ -23,6 +23,13 @@ ProjectSection(SolutionItems) = preProject
 	script\release = script\release
 EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A66521E2-3D4A-4A72-8057-2A8D492C2F34}"
+ProjectSection(SolutionItems) = preProject
+	Directory.Build.props = Directory.Build.props
+	.gitignore = .gitignore
+	.gitattributes = .gitattributes
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
