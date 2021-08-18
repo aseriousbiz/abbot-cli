@@ -1,0 +1,5 @@
+#! /bin/sh
+
+dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -r linux-x64 -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/linux
+dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -r osx.10.12-x64 -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/osx
+dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -r win-x64 -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/win

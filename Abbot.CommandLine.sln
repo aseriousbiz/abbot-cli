@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{B17483
 ProjectSection(SolutionItems) = preProject
 	script\pull-subtree = script\pull-subtree
 	script\push-subtree = script\push-subtree
+	script\build = script\build
+	script\release = script\release
 EndProjectSection
 EndProject
 Global
