@@ -79,7 +79,17 @@ Edit the code in the directory. When you are ready to deploy it, run
         {
             Directory.CreateDirectory(skillDirectoryPath); // noop if directory already exists.
             await File.WriteAllTextAsync(codeFilePath, skillInfo.Code);
-            await File.WriteAllTextAsync(concurrencyFilePath, skillInfo.CodeHash);
+
+            // can't use WriteAllText because on windows File.Exists returns false if the file is hidden,
+            // and then .net decides to create a new file and it all ends in tears
+            using (var fs = new FileStream(concurrencyFilePath, FileMode.OpenOrCreate))
+            {
+                using (var tw = new StreamWriter(fs, Encoding.UTF8, 1024, true))
+                {
+                    tw.Write(skillInfo.CodeHash);
+                }
+                fs.SetLength(fs.Position);
+            }
             var concurrencyFile = new FileInfo(concurrencyFilePath);
             concurrencyFile.Attributes |= FileAttributes.Hidden;
         }
@@ -119,8 +129,10 @@ Edit the code in the directory. When you are ready to deploy it, run
             }
             
             var existingCode = await File.ReadAllTextAsync(codeFilePath);
-            // Check concurrency.
-            var existingCodeHash = File.Exists(concurrencyFilePath)
+
+            var fi = new FileInfo(concurrencyFilePath);
+            // Check concurrency, and don't trust File.Exists, it lies to you
+            var existingCodeHash = fi.Exists
                 ? await File.ReadAllTextAsync(concurrencyFilePath)
                 : string.Empty;
 
