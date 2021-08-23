@@ -3,6 +3,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Net;
 using System.Threading.Tasks;
+using Refit;
 using Serious.Abbot.CommandLine.Services;
 
 namespace Serious.Abbot.CommandLine.Commands
@@ -41,6 +42,11 @@ namespace Serious.Abbot.CommandLine.Commands
             var response = await AbbotApi.CreateInstance(environment).GetStatusAsync();
             if (!response.IsSuccessStatusCode)
             {
+                if (response.Error is ValidationApiException {Content: {Detail: {Length: > 0}}} exception)
+                {
+                    await Console.Error.WriteLineAsync(exception.Content.Detail);
+                    return 1;
+                }
                 var message = response.StatusCode switch
                 {
                     HttpStatusCode.InternalServerError => "An error occurred on the server. Contact support@aseriousbusiness.com to learn more. It's their fault.",
