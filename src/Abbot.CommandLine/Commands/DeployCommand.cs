@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Refit;
 using Serious.Abbot.CommandLine.Services;
 using Serious.Abbot.Messages;
 
@@ -61,40 +62,13 @@ namespace Serious.Abbot.CommandLine.Commands
 
             var response = await AbbotApi.CreateInstance(environment)
                 .DeploySkillAsync(skill, updateRequest);
-            
+
             if (!response.IsSuccessStatusCode)
             {
-                if (response.StatusCode is HttpStatusCode.Conflict)
-                {
-                    Console.WriteLine(@"Could not update the skill because it has been updated by someone else since you started working on it");
-
-                    var conflict = await response.Content.ReadFromJsonAsync<SkillUpdateConflict>();
-                    
-                    if (conflict is not null)
-                    {
-                        Console.WriteLine($@"
-    Last Modified:  {conflict.LastModified}
-    Modified By:    {conflict.LastModifiedBy.Name} ({conflict.LastModifiedBy.PlatformUserId})
-");
-                    }
-                    
-                    Console.WriteLine("You can use `abbot get` to retrieve the latest changes and then apply your changes. We recommend using Git to manage your local changes so you can stash your changes first.");
-                    return 1;
-                }
-
-                var message = response.StatusCode switch
-                {
-                    HttpStatusCode.Found => "Could not find a skill of that name.",
-                    HttpStatusCode.InternalServerError => "An error occurred on the server. Contact support@aseriousbusiness.com to learn more. It's their fault.",
-                    HttpStatusCode.Unauthorized => "The API Key you provided is not valid or expired. Run \"abbot auth\" to authenticate again.",
-                    HttpStatusCode.Forbidden => "You do not have permission to edit that skill. Contact your administrators to request permission.",
-                    _ => $"Received a {response.StatusCode} response from the server"
-                };
-                await Console.Error.WriteLineAsync(message);
-                return 1;
+                return await response.HandleUnsuccessfulResponseAsync();
             }
 
-            var result = await response.Content.ReadFromJsonAsync<SkillUpdateResponse>();
+            var result = response.Content;
             
             if (result is null)
             {

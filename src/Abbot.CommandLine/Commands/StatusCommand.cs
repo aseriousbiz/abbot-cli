@@ -42,19 +42,10 @@ namespace Serious.Abbot.CommandLine.Commands
             var response = await AbbotApi.CreateInstance(environment).GetStatusAsync();
             if (!response.IsSuccessStatusCode)
             {
-                if (response.Error is ValidationApiException {Content: {Detail: {Length: > 0}}} exception)
+                if (!response.IsSuccessStatusCode)
                 {
-                    await Console.Error.WriteLineAsync(exception.Content.Detail);
-                    return 1;
+                    return await response.HandleUnsuccessfulResponseAsync();
                 }
-                var message = response.StatusCode switch
-                {
-                    HttpStatusCode.InternalServerError => "An error occurred on the server. Contact support@aseriousbusiness.com to learn more. It's their fault.",
-                    HttpStatusCode.Unauthorized => "The API Key you provided is not valid or expired. Run \"abbot auth\" to authenticate again.",
-                    _ => $"Received a {response.StatusCode} response from the server"
-                };
-                await Console.Error.WriteLineAsync(message);
-                return 1;
             }
 
             if (response.Content is null)

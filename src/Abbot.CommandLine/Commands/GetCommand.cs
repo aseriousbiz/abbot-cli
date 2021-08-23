@@ -2,7 +2,6 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -99,15 +98,7 @@ Edit the code in the directory. When you are ready to deploy it, run
             var response = await AbbotApi.CreateInstance(environment).GetSkillAsync(skill);
             if (!response.IsSuccessStatusCode)
             {
-                var message = response.StatusCode switch
-                {
-                    HttpStatusCode.Found => "Could not find a skill of that name.",
-                    HttpStatusCode.InternalServerError => "An error occurred on the server. Contact support@aseriousbusiness.com to learn more. It's their fault.",
-                    HttpStatusCode.Unauthorized => "The API Key you provided is not valid or expired. Run \"abbot auth\" to authenticate again.",
-                    HttpStatusCode.Forbidden => "You do not have permission to edit that skill. Contact your administrators to request permission.",
-                    _ => $"Received a {response.StatusCode} response from the server"
-                };
-                await Console.Error.WriteLineAsync(message);
+                await response.HandleUnsuccessfulResponseAsync();
                 return null;
             }
 
