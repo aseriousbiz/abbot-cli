@@ -60,7 +60,7 @@ namespace Serious.Abbot.CommandLine.Commands
             };
 
             var response = await AbbotApi.CreateInstance(environment)
-                .PublishSkillAsync(skill, updateRequest);
+                .DeploySkillAsync(skill, updateRequest);
             
             if (!response.IsSuccessStatusCode)
             {
