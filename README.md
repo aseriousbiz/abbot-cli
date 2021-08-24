@@ -2,6 +2,15 @@
 
 A CLI (Command Line Interface) for editing Abbot skills in a local directory.
 
+## Installation
+
+At the moment, installation is very manual.
+
+1. Visit our [Releases page](https://github.com/aseriousbiz/abbot-cli/releases) and click on the latest release.
+2. Grab the zip file that corresponds to your platform.
+3. Unzip the file into a directory on your computer.
+4. If that directory is not in your `PATH`, add it to your `PATH`.
+
 ## Usage
 
 The first step is to set up an Abbot Skills folder. This is just a folder with some metadata created using the CLI. This folder will contain a folder for each skill that you're working on.
