@@ -32,6 +32,10 @@ namespace Serious.Abbot.CommandLine.Services
         
         public static DevelopmentEnvironment GetEnvironment(string directory)
         {
+            if (directory is { Length: 0 })
+            {
+                directory = ".";
+            }
             var workingDir = new DirectoryInfo(directory);
             var metadataDir = new DirectoryInfo(Path.Combine(workingDir.FullName, ".abbot"));
             var environment = new DevelopmentEnvironment(workingDir, metadataDir);
