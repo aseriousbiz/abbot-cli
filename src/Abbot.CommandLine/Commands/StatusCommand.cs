@@ -16,8 +16,14 @@ namespace Serious.Abbot.CommandLine.Commands
             Handler = CommandHandler.Create<string>(HandleStatusCommandAsync);
         }
 
+        public static string GetVersion()
+        {
+            return typeof(Program).Assembly.GetName().Version?.ToString() ?? "(unknown)";
+        }
+
         static async Task<int> HandleStatusCommandAsync(string directory)
         {
+            Console.WriteLine($"Running abbot-cli version {GetVersion()}");
             var environment = DevelopmentEnvironment.GetEnvironment(directory);
             var workingDir = environment.WorkingDirectory.FullName;
             
@@ -57,7 +63,7 @@ namespace Serious.Abbot.CommandLine.Commands
             var organization = response.Content.Organization;
             var user = response.Content.User;
             
-            var status = @$"The directory {workingDir} is an authenticated Abbot Skill Development environment.
+            var status = @$"The directory {workingDir} is an authenticated Abbot Skills folder.
 Organization: {organization.Name} ({organization.Platform} {organization.PlatformId})
 User: {user.Name} ({user.PlatformUserId})";
             Console.WriteLine(status);
