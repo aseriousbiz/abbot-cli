@@ -2,12 +2,9 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
-        <RuntimeIdentifiers>win10-x64;osx.10.12-x64;ubuntu.16.04-x64</RuntimeIdentifiers>
-        <PublishSingleFile>true</PublishSingleFile>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>Link</TrimMode>
-        <SelfContained>true</SelfContained>
         <LangVersion>preview</LangVersion>
         <AssemblyName>abbot</AssemblyName>
         <RootNamespace>Serious.Abbot.CommandLine</RootNamespace>

@@ -3,6 +3,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Net;
 using System.Threading.Tasks;
+using Refit;
 using Serious.Abbot.CommandLine.Services;
 
 namespace Serious.Abbot.CommandLine.Commands
@@ -41,14 +42,10 @@ namespace Serious.Abbot.CommandLine.Commands
             var response = await AbbotApi.CreateInstance(environment).GetStatusAsync();
             if (!response.IsSuccessStatusCode)
             {
-                var message = response.StatusCode switch
+                if (!response.IsSuccessStatusCode)
                 {
-                    HttpStatusCode.InternalServerError => "An error occurred on the server. Contact support@aseriousbusiness.com to learn more. It's their fault.",
-                    HttpStatusCode.Unauthorized => "The API Key you provided is not valid or expired. Run \"abbot auth\" to authenticate again.",
-                    _ => $"Received a {response.StatusCode} response from the server"
-                };
-                await Console.Error.WriteLineAsync(message);
-                return 1;
+                    return await response.HandleUnsuccessfulResponseAsync();
+                }
             }
 
             if (response.Content is null)
