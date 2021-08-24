@@ -16,7 +16,7 @@ namespace Serious.Abbot.CommandLine.Commands
         {
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill to run"));
             Add(new Argument<string>("arguments", () => ".", "The arguments to pass to the skill"));
-            var option = new Option<string>("--directory", "The Abbot Skills Development Environment directory. If omitted, assumes the current directory.");
+            var option = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             option.AddAlias("-d");
             AddOption(option);
             Handler = CommandHandler.Create<string, string, string?>(HandleRunCommandAsync);
@@ -28,7 +28,7 @@ namespace Serious.Abbot.CommandLine.Commands
             if (!environment.IsInitialized)
             {
                 var directoryType = directory == "." ? "current" : "specified";
-                Console.WriteLine($"The {directoryType} directory is not an Abbot Skills Development Environment. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
+                Console.WriteLine($"The {directoryType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
                 return 1;
             }
             
