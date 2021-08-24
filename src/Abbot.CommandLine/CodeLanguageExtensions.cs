@@ -9,7 +9,7 @@ namespace Serious.Abbot.CommandLine
             return language switch
             {
                 CodeLanguage.Python => "py",
-                CodeLanguage.CSharp => "cs",
+                CodeLanguage.CSharp => "csx",
                 CodeLanguage.JavaScript => "js",
                 _ => "txt"
             };
