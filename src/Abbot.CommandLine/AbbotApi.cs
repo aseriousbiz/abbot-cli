@@ -1,7 +1,9 @@
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Refit;
+using Serious.Abbot.CommandLine.Commands;
 using Serious.Abbot.CommandLine.Services;
 
 namespace Serious.Abbot.CommandLine
@@ -14,10 +16,18 @@ namespace Serious.Abbot.CommandLine
         const string ApiHost = "https://api.ab.bot/";
 #endif
 
-        public static IAbbotApi CreateInstance(DevelopmentEnvironment environment) => RestService.For<IAbbotApi>(ApiHost, new RefitSettings()
+        public static IAbbotApi CreateInstance(DevelopmentEnvironment environment)
         {
-            AuthorizationHeaderValueGetter = async () => await environment.GetTokenAsync() ?? string.Empty
-        });
+            var settings = new RefitSettings
+            {
+                AuthorizationHeaderValueGetter = async () => await environment.GetTokenAsync() ?? string.Empty,
+            };
+#pragma warning disable CA2000
+            var httpClient = RestService.CreateHttpClient(ApiHost, settings);
+#pragma warning restore CA2000
+            httpClient.DefaultRequestHeaders.Add("X-Client-Version", StatusCommand.GetVersion());
+            return RestService.For<IAbbotApi>(httpClient);
+        }
 
         /// <summary>
         /// If the response status is not successful, then this examines the response and writes an appropriate

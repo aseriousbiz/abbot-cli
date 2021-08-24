@@ -2,27 +2,29 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Linq;
 using System.Net;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Refit;
 using Serious.Abbot.CommandLine.Services;
 using Serious.Abbot.Messages;
 
 namespace Serious.Abbot.CommandLine.Commands
 {
-    public class DeployCommand : Command
+    public class RunCommand : Command
     {
-        public DeployCommand() : base("deploy", $"Deploys local changes to the specified skill to {Program.Website}")
+        public RunCommand() : base("run", "Runs your skill code in the skill runner")
         {
-            Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
-            Add(new Argument<string>("directory", () => ".", "The Abbot Skills folder. If omitted, assumes the current directory."));
-            Handler = CommandHandler.Create<string, string>(HandleUploadCommandAsync);
+            Add(new Argument<string>("skill", () => string.Empty, "The name of the skill to run"));
+            Add(new Argument<string>("arguments", () => ".", "The arguments to pass to the skill"));
+            var option = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            option.AddAlias("-d");
+            AddOption(option);
+            Handler = CommandHandler.Create<string, string, string?>(HandleRunCommandAsync);
         }
-        
-        static async Task<int> HandleUploadCommandAsync(string skill, string directory)
+
+        static async Task<int> HandleRunCommandAsync(string skill, string arguments, string? directory)
         {
-            var environment = DevelopmentEnvironment.GetEnvironment(directory);
+            var environment = DevelopmentEnvironment.GetEnvironment(directory ?? ".");
             if (!environment.IsInitialized)
             {
                 var directoryType = directory == "." ? "current" : "specified";
@@ -49,37 +51,32 @@ namespace Serious.Abbot.CommandLine.Commands
                 Console.WriteLine($"Found more than one code file in {skillDirectory.FullName}");
                 return 1;
             }
-
+            
             var code = await File.ReadAllTextAsync(codeFiles[0].FullName);
-            var concurrencyFilePath = Path.Combine(skillDirectory.FullName, ".concurrency");
-            var previousCodeHash = await File.ReadAllTextAsync(concurrencyFilePath);
-
-            var updateRequest = new SkillUpdateRequest
+            
+            var runRequest = new SkillRunRequest
             {
                 Code = code,
-                PreviousCodeHash = previousCodeHash
+                Arguments = arguments,
+                Name = skill
             };
 
             var response = await AbbotApi.CreateInstance(environment)
-                .DeploySkillAsync(skill, updateRequest);
-
+                .RunSkillAsync(skill, runRequest);
+            
             if (!response.IsSuccessStatusCode)
             {
                 return await response.HandleUnsuccessfulResponseAsync();
             }
 
-            var result = response.Content;
-            
-            if (result is null)
+            if (response.Content?.Replies is null)
             {
-                Console.WriteLine($"The skill directory has been corrupted. Please run `abbot download {skill} {directory}` to restore the state.");
+                await Console.Error.WriteLineAsync("Response content is null");
                 return 1;
             }
 
-            await File.WriteAllTextAsync(concurrencyFilePath, result.NewCodeHash);
-            Console.WriteLine($"Skill {skill} updated.");
+            Console.WriteLine(string.Join("\n", response.Content.Replies));
             return 0;
         }
-
     }
 }

@@ -16,5 +16,8 @@ namespace Serious.Abbot.CommandLine
 
         [Put("/api/cli/{skill}")]
         Task<ApiResponse<SkillUpdateResponse>> DeploySkillAsync(string skill, SkillUpdateRequest updateRequest);
+
+        [Post("/api/cli/{skill}/run")]
+        Task<ApiResponse<SkillRunResponse>> RunSkillAsync(string skill, SkillRunRequest runRequest);
     }
 }
