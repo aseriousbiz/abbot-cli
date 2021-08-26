@@ -10,7 +10,9 @@ namespace Serious.Abbot.CommandLine.Commands
     {
         public InitCommand() : base("init", "Set up a local Abbot development directory")
         {
-            Add(new Argument<string>("directory", () => ".", "The directory to set up as a local Abbot development environment. This will create an `.abbot` folder in that directory. If the directory does not exist, this creates the directory."));
+            var directoryOption = new Option<string>("--directory", "The directory to set up as a local Abbot development environment. This will create a `.abbot` folder in that directory. If the directory does not exist, this creates the directory.");
+            directoryOption.AddAlias("-d");
+            AddOption(directoryOption);
             Handler = CommandHandler.Create<string>(HandleInitCommandAsync);
         }
 

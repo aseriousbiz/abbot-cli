@@ -15,10 +15,12 @@ namespace Serious.Abbot.CommandLine.Commands
         public GetCommand() : base("get", "Downloads the specified skill code into a directory named after the skill.")
         {
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
-            Add(new Argument<string>("directory", () => ".", "The Abbot Skills folder. If omitted, assumes the current directory."));
-            var option = new Option<bool>("--force", "If true, overwrites the local skill code if it exists even if it has changes.");
-            option.AddAlias("-f");
-            AddOption(option);
+            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            directoryOption.AddAlias("-d");
+            AddOption(directoryOption);
+            var forceOption = new Option<bool>("--force", "If true, overwrites the local skill code if it exists even if it has changes.");
+            forceOption.AddAlias("-f");
+            AddOption(forceOption);
             Handler = CommandHandler.Create<string, string, bool>(HandleDownloadCommandAsync);
         }
 

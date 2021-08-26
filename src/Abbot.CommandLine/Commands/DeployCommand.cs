@@ -16,7 +16,9 @@ namespace Serious.Abbot.CommandLine.Commands
         public DeployCommand() : base("deploy", $"Deploys local changes to the specified skill to {Program.Website}")
         {
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
-            Add(new Argument<string>("directory", () => ".", "The Abbot Skills folder. If omitted, assumes the current directory."));
+            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            directoryOption.AddAlias("-d");
+            AddOption(directoryOption);
             Handler = CommandHandler.Create<string, string>(HandleUploadCommandAsync);
         }
         

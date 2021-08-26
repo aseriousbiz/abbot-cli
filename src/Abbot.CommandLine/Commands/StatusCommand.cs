@@ -12,7 +12,9 @@ namespace Serious.Abbot.CommandLine.Commands
     {
         public StatusCommand() : base("status", "Get the status of the Abbot development directory.")
         {
-            Add(new Argument<string>("directory", () => ".", "The Abbot development directory to get the status for. If omitted, checks the current directory."));
+            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            directoryOption.AddAlias("-d");
+            AddOption(directoryOption);
             Handler = CommandHandler.Create<string>(HandleStatusCommandAsync);
         }
 

@@ -10,7 +10,9 @@ namespace Serious.Abbot.CommandLine.Commands
         public ReplCommand() : base("repl", "Starts a REPL session for the specified skill. Hit CTRL+C to exit.")
         {
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill to run the REPL against"));
-            Add(new Argument<string>("directory", () => ".", "The Abbot development directory. If omitted, uses the current directory."));
+            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            directoryOption.AddAlias("-d");
+            AddOption(directoryOption);
             Handler = CommandHandler.Create<string, string>(HandleReplCommandAsync);
         }
 
