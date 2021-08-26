@@ -22,7 +22,7 @@ namespace Serious.Abbot.CommandLine.Commands
             Handler = CommandHandler.Create<string, string, string?>(HandleRunCommandAsync);
         }
 
-        static async Task<int> HandleRunCommandAsync(string skill, string arguments, string? directory)
+        internal static async Task<int> HandleRunCommandAsync(string skill, string arguments, string? directory)
         {
             var environment = DevelopmentEnvironment.GetEnvironment(directory ?? ".");
             if (!environment.IsInitialized)

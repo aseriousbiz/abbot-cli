@@ -75,6 +75,10 @@ Hello The arguments to the skill
 
 If there are more than one argument to the skill, the arguments must be quoted.
 
+### Run a skill in a REPL
+
+Sometimes you want to continuously test a skill. You can run a skill in a REPL (Read-eval-print-loop) using `abbot repl`.
+
 ## Development
 
 This is a .NET 5 Console project.
