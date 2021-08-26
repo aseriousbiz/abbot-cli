@@ -13,10 +13,12 @@ namespace Serious.Abbot.CommandLine.Commands
 
         public AuthCommand() : base("auth", "Authenticate the abbot command line")
         {
-            Add(new Argument<string>("directory", () => ".", "The directory to authenticate as a local Abbot development environment. If the directory is not an Abbot development environment, this will set it up as one and then authenticate."));
-            var option = new Option<string>("--token", $"The API Key token created at {TokenPage}.");
-            option.AddAlias("-t");
-            AddOption(option);
+            var directoryOption = new Option<string>("--directory", "The directory to authenticate as a local Abbot development environment. If the directory is not an Abbot development environment, this will set it up as one and then authenticate.");
+            directoryOption.AddAlias("-d");
+            AddOption(directoryOption);
+            var tokenOption = new Option<string>("--token", $"The API Key token created at {TokenPage}.");
+            tokenOption.AddAlias("-t");
+            AddOption(tokenOption);
             Handler = CommandHandler.Create<string, string>(HandleAuthenticateCommandAsync);
         }
         

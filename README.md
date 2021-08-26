@@ -13,12 +13,14 @@ At the moment, installation is very manual.
 
 ## Usage
 
+Note that each of these commands assumes that you are running the command from the working folder that contains your Abbot Skills. If you're running the command from a different folder, use the `--directory` (or `-d`) flag to specify the Abbot Skills directory.
+
 The first step is to set up an Abbot Skills folder. This is just a folder with some metadata created using the CLI. This folder will contain a folder for each skill that you're working on.
 
 You can use the `abbot auth` command to set it up. For example,
 
 ```bash
-$ abbot auth ./my-skills
+$ abbot auth
 
             Please visit https://ab.bot/account/apikeys to generate an authentication token. I will attempt to open your browser for you.
 
@@ -58,7 +60,7 @@ Note that this command must also be run in the __root__ directory of the Abbot S
 You can always check on the status of an Abbot Skills folder with `abbot status`.
 
 ```bash
-$ abbot status .
+$ abbot status
 The directory /Users/haacked/my-skills is an authenticated Abbot Skill Development environment.
 Organization: Serious Business (Slack T0123456)
 User: Phil Haack (U0123456)
@@ -74,6 +76,10 @@ Hello The arguments to the skill
 ```
 
 If there are more than one argument to the skill, the arguments must be quoted.
+
+### Run a skill in a REPL
+
+Sometimes you want to continuously test a skill. You can run a skill in a REPL (Read-eval-print-loop) using `abbot repl`.
 
 ## Development
 

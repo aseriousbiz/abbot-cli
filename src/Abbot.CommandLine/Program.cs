@@ -29,6 +29,7 @@ namespace Serious.Abbot.CommandLine
                 new GetCommand(),
                 new InitCommand(),
                 new DeployCommand(),
+                new ReplCommand(),
                 new RunCommand(),
                 new StatusCommand()
             };
