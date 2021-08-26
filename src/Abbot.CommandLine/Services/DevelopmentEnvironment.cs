@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading.Tasks;
+using Serious.Abbot.CommandLine.Editors;
 
 namespace Serious.Abbot.CommandLine.Services
 {
@@ -26,7 +27,8 @@ namespace Serious.Abbot.CommandLine.Services
             }
 
             await environment.EnsureGitIgnoreAsync();
-            
+            await environment.EnsureReferencesFileAsync();
+            await environment.EnsureOmniSharpConfigAsync();
             return environment;
         }
         
@@ -81,9 +83,17 @@ namespace Serious.Abbot.CommandLine.Services
                 return;
             }
 
-            await using var stream = gitignore.OpenWrite();
-            await using var writer = new StreamWriter(stream);
-            await writer.WriteLineAsync("*");
+            await FileHelpers.WriteAllTextAsync(gitignore.FullName, "*");
+        }
+        
+        Task EnsureReferencesFileAsync()
+        {
+            return Omnisharp.WriteRspFileAsync(_metadataDirectory.FullName);
+        }
+        
+        Task EnsureOmniSharpConfigAsync()
+        {
+            return Omnisharp.WriteConfigFileAsync(WorkingDirectory.FullName, ".abbot/references.rsp");
         }
     }
 }

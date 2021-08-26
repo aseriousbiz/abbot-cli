@@ -14,6 +14,8 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class GetCommand : Command
     {
+        public const string SkillMetaFolder = ".meta";
+        
         public GetCommand() : base("get", "Downloads the specified skill code into a directory named after the skill.")
         {
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
@@ -88,11 +90,10 @@ Edit the code in the directory. When you are ready to deploy it, run
             if (skillInfo.Language is CodeLanguage.CSharp)
             {
                 // Write extra files to help VS Code's Intellisense.
-                await Omnisharp.WriteConfigFileAsync(skillDirectoryPath);
+                await Omnisharp.WriteConfigFileAsync(skillDirectoryPath, "../.abbot/references.rsp");
 
-                var editorMetaDirectory = Path.Combine(skillDirectoryPath, ".editor");
+                var editorMetaDirectory = Path.Combine(skillDirectoryPath, SkillMetaFolder);
                 Directory.CreateDirectory(editorMetaDirectory); // noop if directory already exists.
-                await Omnisharp.WriteRspFileAsync(editorMetaDirectory);
                 await Omnisharp.WriteGlobalsCsxFileAsync(editorMetaDirectory);
 
                 code = Omnisharp.EnsureGlobalsDirective(code);

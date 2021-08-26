@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Serious.Abbot.CommandLine.Commands;
 
 namespace Serious.Abbot.CommandLine.Editors
 {
@@ -14,14 +15,15 @@ namespace Serious.Abbot.CommandLine.Editors
         /// C# language server to the editor.
         /// </summary>
         /// <param name="directory">The skill directory.</param>
-        public static Task<FileInfo> WriteConfigFileAsync(string directory)
+        /// <param name="referencePath">Path to the reference.rsp file</param>
+        public static Task<FileInfo> WriteConfigFileAsync(string directory, string referencePath)
         {
-            const string configJson = @"{
+            string configJson = @"{
     ""script"": {
             ""enabled"": true,
             ""defaultTargetFramework"": ""net5.0"",
             ""enableScriptNuGetReferences"": true,
-            ""RspFilePath"": ""./.editor/references.rsp""
+            ""RspFilePath"": """ + referencePath + @"""
         }
     }";
             var path = Path.Combine(directory, "omnisharp.json");
@@ -35,19 +37,22 @@ namespace Serious.Abbot.CommandLine.Editors
         public static Task<FileInfo> WriteRspFileAsync(string directory)
         {
             // TODO: We need to get this list from Abbot and not hard-code it.
-            const string rsp = @"/r:System.ValueTuple
-/u:System
-/u:System.IO
+            const string rsp = @"/u:System
+/u:System.Collections
+/u:System.Collections.Concurrent;
 /u:System.Collections.Generic
-/u:System.Console
-/u:System.Diagnostics
+/u:System.Data
 /u:System.Dynamic
+/u:System.Globalization
 /u:System.Linq
 /u:System.Linq.Expressions
+/u:System.Net.Http
 /u:System.Text
 /u:System.Text.RegularExpressions
+/u:System.Threading
 /u:System.Threading.Tasks
-/u:Serious.Abbot.Scripting";
+/u:Serious.Abbot.Scripting
+/u:NodaTime";
             var path = Path.Combine(directory, "references.rsp");
             return FileHelpers.WriteAllTextAsync(path, rsp);
         }
@@ -69,7 +74,7 @@ var Bot = new Serious.Abbot.Scripting.Bot();
             return FileHelpers.WriteAllTextAsync(path, globals);
         }
 
-        const string LoadDirective = "#load \"./.editor/globals.csx\" // This is required for Intellisense in VS Code, etc. DO NOT TOUCH THIS LINE!\n";
+        const string LoadDirective = $"#load \"{GetCommand.SkillMetaFolder}/globals.csx\" // This is required for Intellisense in VS Code, etc. DO NOT TOUCH THIS LINE!\n";
 
         /// <summary>
         /// Adds the OmniSharp directive to load the globals.csx file exists at the beginning of the file. If it
