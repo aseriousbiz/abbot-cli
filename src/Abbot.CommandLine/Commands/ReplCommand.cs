@@ -20,15 +20,17 @@ namespace Serious.Abbot.CommandLine.Commands
         {
             Console.Clear();
             Console.Write($@"
-   _____ ___.  ___.           __   
-  /  _  \\_ |__\_ |__   _____/  |_ 
- /  /_\  \| __ \| __ \ /  _ \   __\
-/    |    \ \_\ \ \_\ (  <_> )  |  
-\____|__  /___  /___  /\____/|__|  
-        \/    \/    \/             
+           _     _           _    
+          | |   | |         | |   
+      __ _| |__ | |__   ___ | |_  
+     / _` | '_ \| '_ \ / _ \| __| 
+    | (_| | |_) | |_) | (_) | |_  
+     \__,_|_.__/|_.__/ \___/ \__| 
+
+Abbot {StatusCommand.GetVersion()}.
 
 Welcome to the Abbot REPL for the ""{skill}"" skill!
-You can test your skill by entering arguments to the skill and hitting <ENTER>.
+Enter arguments to the skill and hit <ENTER> to run the local version of the skill.
 
 $ @abbot {skill} ");
             while (true)
