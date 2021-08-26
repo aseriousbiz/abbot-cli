@@ -79,20 +79,9 @@ Edit the code in the directory. When you are ready to deploy it, run
             string concurrencyFilePath)
         {
             Directory.CreateDirectory(skillDirectoryPath); // noop if directory already exists.
-            await File.WriteAllTextAsync(codeFilePath, skillInfo.Code);
-
-            // can't use WriteAllText because on windows File.Exists returns false if the file is hidden,
-            // and then .net decides to create a new file and it all ends in tears
-            using (var fs = new FileStream(concurrencyFilePath, FileMode.OpenOrCreate))
-            {
-                using (var tw = new StreamWriter(fs, Encoding.UTF8, 1024, true))
-                {
-                    tw.Write(skillInfo.CodeHash);
-                }
-                fs.SetLength(fs.Position);
-            }
-            var concurrencyFile = new FileInfo(concurrencyFilePath);
-            concurrencyFile.Attributes |= FileAttributes.Hidden;
+            await FileHelpers.WriteAllTextAsync(codeFilePath, skillInfo.Code);
+            var concurrencyFile = await FileHelpers.WriteAllTextAsync(concurrencyFilePath, skillInfo.CodeHash);
+            concurrencyFile.HideFile();
         }
 
         static async Task<SkillGetResponse?> GetSkillInfoAsync(string skill, DevelopmentEnvironment environment)
