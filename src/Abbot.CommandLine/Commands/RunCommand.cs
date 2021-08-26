@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Serious.Abbot.CommandLine.Editors;
 using Serious.Abbot.CommandLine.Services;
 using Serious.Abbot.Messages;
 
@@ -54,6 +55,7 @@ namespace Serious.Abbot.CommandLine.Commands
             }
             
             var code = await File.ReadAllTextAsync(codeFiles[0].FullName);
+            code = Omnisharp.RemoveGlobalsDirective(code);
             
             var runRequest = new SkillRunRequest
             {

@@ -5,7 +5,9 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Serious.Abbot.CommandLine.Editors;
 using Serious.Abbot.CommandLine.Services;
+using Serious.Abbot.Entities;
 using Serious.Abbot.Messages;
 
 namespace Serious.Abbot.CommandLine.Commands
@@ -79,9 +81,25 @@ Edit the code in the directory. When you are ready to deploy it, run
             string concurrencyFilePath)
         {
             Directory.CreateDirectory(skillDirectoryPath); // noop if directory already exists.
-            await FileHelpers.WriteAllTextAsync(codeFilePath, skillInfo.Code);
             var concurrencyFile = await FileHelpers.WriteAllTextAsync(concurrencyFilePath, skillInfo.CodeHash);
             concurrencyFile.HideFile();
+
+            var code = skillInfo.Code;
+            if (skillInfo.Language is CodeLanguage.CSharp)
+            {
+                // Write extra files to help VS Code's Intellisense.
+                await Omnisharp.WriteConfigFileAsync(skillDirectoryPath);
+
+                var editorMetaDirectory = Path.Combine(skillDirectoryPath, ".editor");
+                Directory.CreateDirectory(editorMetaDirectory); // noop if directory already exists.
+                await Omnisharp.WriteRspFileAsync(editorMetaDirectory);
+                await Omnisharp.WriteGlobalsCsxFileAsync(editorMetaDirectory);
+
+                code = Omnisharp.EnsureGlobalsDirective(code);
+            }
+            
+            // Write the code file.
+            await FileHelpers.WriteAllTextAsync(codeFilePath, code);
         }
 
         static async Task<SkillGetResponse?> GetSkillInfoAsync(string skill, DevelopmentEnvironment environment)
@@ -111,7 +129,8 @@ Edit the code in the directory. When you are ready to deploy it, run
             }
             
             var existingCode = await File.ReadAllTextAsync(codeFilePath);
-
+            existingCode = Omnisharp.RemoveGlobalsDirective(existingCode);
+            
             var fi = new FileInfo(concurrencyFilePath);
             // Check concurrency, and don't trust File.Exists, it lies to you
             var existingCodeHash = fi.Exists

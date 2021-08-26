@@ -25,7 +25,7 @@ namespace Serious.Abbot.CommandLine
         /// <param name="path">The file to write to.</param>
         /// <param name="contents">The string to write to the file.</param>
         /// <param name="encoding">The encoding to apply to the string.</param>
-        public static async Task<FileInfo> WriteAllTextAsync(string path, string contents, Encoding encoding)
+        static async Task<FileInfo> WriteAllTextAsync(string path, string contents, Encoding encoding)
         {
             // can't use WriteAllText because on windows File.Exists returns false if the file is hidden,
             // and then .net decides to create a new file and it all ends in tears

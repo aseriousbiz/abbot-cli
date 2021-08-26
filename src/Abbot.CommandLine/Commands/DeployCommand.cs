@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Refit;
+using Serious.Abbot.CommandLine.Editors;
 using Serious.Abbot.CommandLine.Services;
 using Serious.Abbot.Messages;
 
@@ -53,6 +54,7 @@ namespace Serious.Abbot.CommandLine.Commands
             }
 
             var code = await File.ReadAllTextAsync(codeFiles[0].FullName);
+            code = Omnisharp.RemoveGlobalsDirective(code);
             var concurrencyFilePath = Path.Combine(skillDirectory.FullName, ".concurrency");
             var previousCodeHash = await File.ReadAllTextAsync(concurrencyFilePath);
 
