@@ -15,9 +15,10 @@ namespace Serious.Abbot.CommandLine.Editors
         /// C# language server to the editor.
         /// </summary>
         /// <param name="directory">The skill directory.</param>
-        /// <param name="referencePath">Path to the reference.rsp file</param>
-        public static Task<IFileInfo> WriteConfigFileAsync(IDirectoryInfo directory, string referencePath)
+        /// <param name="relativeDirectoryPath">Relative path to the directory containing the reference.rsp file</param>
+        public static Task<IFileInfo> WriteConfigFileAsync(IDirectoryInfo directory, string relativeDirectoryPath)
         {
+            var referencePath = relativeDirectoryPath + ".abbot/references.rsp";
             string configJson = @"{
     ""script"": {
             ""enabled"": true,
@@ -52,7 +53,7 @@ namespace Serious.Abbot.CommandLine.Editors
 /u:System.Threading.Tasks
 /u:Serious.Abbot.Scripting
 /u:NodaTime";
-            return WriteFileAsync(directory, "references.csp", rsp);
+            return WriteFileAsync(directory, "references.rsp", rsp);
         }
 
         /// <summary>

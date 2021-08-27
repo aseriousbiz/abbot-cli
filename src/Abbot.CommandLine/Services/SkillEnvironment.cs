@@ -65,6 +65,7 @@ namespace Serious.Abbot.CommandLine.Services
             if (skillInfo.Language is CodeLanguage.CSharp)
             {
                 await Omnisharp.WriteGlobalsCsxFileAsync(_skillMetaDirectory);
+                await Omnisharp.WriteConfigFileAsync(_skillDirectory, "../");
             }
         }
 

@@ -100,7 +100,7 @@ namespace Serious.Abbot.CommandLine.Services
         
         Task EnsureOmniSharpConfigAsync()
         {
-            return Omnisharp.WriteConfigFileAsync(WorkingDirectory, ".abbot/references.rsp");
+            return Omnisharp.WriteConfigFileAsync(WorkingDirectory, string.Empty);
         }
     }
 }
