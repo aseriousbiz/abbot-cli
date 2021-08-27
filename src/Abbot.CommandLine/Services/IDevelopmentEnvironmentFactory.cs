@@ -7,7 +7,6 @@ namespace Serious.Abbot.CommandLine.Services
         /// Note that this doesn't create the actual environment. EnsureAsync has to be called next.
         /// </summary>
         /// <param name="directory">Path to the development environment working directory.</param>
-        /// <returns></returns>
-        DevelopmentEnvironment GetDevelopmentEnvironment(string directory);
+        DevelopmentEnvironment GetDevelopmentEnvironment(string? directory);
     }
 }

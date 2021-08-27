@@ -17,21 +17,21 @@ namespace Serious.Abbot.CommandLine.Commands
         {
             _developmentEnvironmentFactory = developmentEnvironmentFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
-            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
             var forceOption = new Option<bool>("--force", "If true, overwrites the local skill code if it exists even if it has changes.");
             forceOption.AddAlias("-f");
             AddOption(forceOption);
-            Handler = CommandHandler.Create<string, string, bool>(HandleDownloadCommandAsync);
+            Handler = CommandHandler.Create<string, string?, bool>(HandleDownloadCommandAsync);
         }
 
-        async Task<int> HandleDownloadCommandAsync(string skill, string directory, bool force)
+        async Task<int> HandleDownloadCommandAsync(string skill, string? directory, bool force)
         {
             var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
             if (!environment.IsInitialized)
             {
-                var directoryType = directory == "." ? "current" : "specified";
+                var directoryType = environment.DirectorySpecified ? "specified" : "current";
                 Console.WriteLine($"The {directoryType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
                 return 1;
             }

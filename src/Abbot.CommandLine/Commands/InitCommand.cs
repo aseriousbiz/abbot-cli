@@ -14,13 +14,13 @@ namespace Serious.Abbot.CommandLine.Commands
             : base("init", "Set up a local Abbot development directory")
         {
             _developmentEnvironmentFactory = developmentEnvironmentFactory;
-            var directoryOption = new Option<string>("--directory", "The directory to set up as a local Abbot development environment. This will create a `.abbot` folder in that directory. If the directory does not exist, this creates the directory.");
+            var directoryOption = new Option<string?>("--directory", "The directory to set up as a local Abbot development environment. This will create a `.abbot` folder in that directory. If the directory does not exist, this creates the directory.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
-            Handler = CommandHandler.Create<string>(HandleInitCommandAsync);
+            Handler = CommandHandler.Create<string?>(HandleInitCommandAsync);
         }
 
-        async Task<int> HandleInitCommandAsync(string directory)
+        async Task<int> HandleInitCommandAsync(string? directory)
         {
             var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
             await environment.EnsureAsync();

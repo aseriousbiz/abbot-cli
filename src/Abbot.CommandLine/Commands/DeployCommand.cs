@@ -19,12 +19,12 @@ namespace Serious.Abbot.CommandLine.Commands
             var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
-            Handler = CommandHandler.Create<string, string>(HandleUploadCommandAsync);
+            Handler = CommandHandler.Create<string, string?>(HandleUploadCommandAsync);
         }
         
         async Task<int> HandleUploadCommandAsync(string skill, string? directory)
         {
-            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory ?? ".");
+            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
             var skillEnvironment = environment.GetSkillEnvironment(skill);
 
             var codeResult = await skillEnvironment.GetCodeAsync(environment);

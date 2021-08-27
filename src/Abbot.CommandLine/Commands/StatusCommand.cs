@@ -14,10 +14,10 @@ namespace Serious.Abbot.CommandLine.Commands
             : base("status", "Get the status of the Abbot development directory.")
         {
             _developmentEnvironmentFactory = developmentEnvironmentFactory;
-            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
-            Handler = CommandHandler.Create<string>(HandleStatusCommandAsync);
+            Handler = CommandHandler.Create<string?>(HandleStatusCommandAsync);
         }
 
         public static string GetVersion()
@@ -25,7 +25,7 @@ namespace Serious.Abbot.CommandLine.Commands
             return typeof(Program).Assembly.GetName().Version?.ToString() ?? "(unknown)";
         }
 
-        async Task<int> HandleStatusCommandAsync(string directory)
+        async Task<int> HandleStatusCommandAsync(string? directory)
         {
             Console.WriteLine($"Running abbot-cli version {GetVersion()}");
             var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);

@@ -10,9 +10,10 @@ public class DevelopmentEnvironmentTests
         [Fact]
         public void CreatesEnvironmentInstanceButNothingOnDisk()
         {
-            var environment = new DevelopmentEnvironment(new FakeDirectoryInfo("."));
+            var environment = new DevelopmentEnvironment(new FakeDirectoryInfo("."), true);
             
             Assert.False(environment.Exists);
+            Assert.True(environment.DirectorySpecified);
         }
     }
 
@@ -22,7 +23,7 @@ public class DevelopmentEnvironmentTests
         public async Task CreatesFoldersAndFilesForAbbotSkillDevelopment()
         {
             var workingDirectory = new FakeDirectoryInfo(".");
-            var environment = new DevelopmentEnvironment(workingDirectory);
+            var environment = new DevelopmentEnvironment(workingDirectory, true);
 
             await environment.EnsureAsync();
             

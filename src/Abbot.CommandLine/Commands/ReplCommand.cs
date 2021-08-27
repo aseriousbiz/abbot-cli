@@ -14,13 +14,13 @@ namespace Serious.Abbot.CommandLine.Commands
         {
             _runCommand = runCommand;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill to run the REPL against"));
-            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
-            Handler = CommandHandler.Create<string, string>(HandleReplCommandAsync);
+            Handler = CommandHandler.Create<string, string?>(HandleReplCommandAsync);
         }
 
-        async Task<int> HandleReplCommandAsync(string skill, string directory)
+        async Task<int> HandleReplCommandAsync(string skill, string? directory)
         {
             Console.Clear();
             Console.Write($@"

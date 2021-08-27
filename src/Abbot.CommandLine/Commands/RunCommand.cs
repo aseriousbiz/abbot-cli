@@ -17,7 +17,7 @@ namespace Serious.Abbot.CommandLine.Commands
             _developmentEnvironmentFactory = developmentEnvironmentFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill to run"));
             Add(new Argument<string>("arguments", () => ".", "The arguments to pass to the skill"));
-            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
 
@@ -26,7 +26,7 @@ namespace Serious.Abbot.CommandLine.Commands
 
         internal async Task<int> HandleRunCommandAsync(string skill, string arguments, string? directory)
         {
-            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory ?? ".");
+            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
             var skillEnvironment = environment.GetSkillEnvironment(skill);
 
             var codeResult = await skillEnvironment.GetCodeAsync(environment);

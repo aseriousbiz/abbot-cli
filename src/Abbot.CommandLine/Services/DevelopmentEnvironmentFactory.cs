@@ -4,10 +4,10 @@ namespace Serious.Abbot.CommandLine.Services
 {
     public class DevelopmentEnvironmentFactory : IDevelopmentEnvironmentFactory
     {
-        public DevelopmentEnvironment GetDevelopmentEnvironment(string directory)
+        public DevelopmentEnvironment GetDevelopmentEnvironment(string? directory)
         {
-            var workingDirectory = new DirectoryInfoWrapper(directory);
-            return new DevelopmentEnvironment(workingDirectory);
+            var workingDirectory = new DirectoryInfoWrapper(directory ?? ".");
+            return new DevelopmentEnvironment(workingDirectory, directory is not null);
         }
     }
 }

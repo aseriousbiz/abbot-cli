@@ -13,27 +13,35 @@ namespace Serious.Abbot.CommandLine.Services
         readonly IDirectoryInfo _metadataDirectory;
         readonly TokenStore _tokenStore;
 
-        public DevelopmentEnvironment(IDirectoryInfo workingDirectory)
-            : this(workingDirectory, workingDirectory.GetSubdirectory(".abbot"))
+        /// <summary>
+        /// Constructs an instance of a Development Environment.
+        /// </summary>
+        /// <param name="workingDirectory">The working directory.</param>
+        /// <param name="directorySpecified">Whether the working directory was specified or is the current directory.</param>
+        public DevelopmentEnvironment(IDirectoryInfo workingDirectory, bool directorySpecified)
+            : this(workingDirectory, workingDirectory.GetSubdirectory(".abbot"), directorySpecified)
         {
         }
 
-        DevelopmentEnvironment(IDirectoryInfo workingDirectory, IDirectoryInfo metadataDirectory)
+        DevelopmentEnvironment(IDirectoryInfo workingDirectory, IDirectoryInfo metadataDirectory, bool directorySpecified)
             : this(
                 workingDirectory,
                 metadataDirectory,
-                new TokenStore(new TokenProtector(), metadataDirectory.GetFile("TOKEN")))
+                new TokenStore(new TokenProtector(), metadataDirectory.GetFile("TOKEN")),
+                directorySpecified)
         {
         }
 
         DevelopmentEnvironment(
             IDirectoryInfo workingDirectory,
             IDirectoryInfo metadataDirectory,
-            TokenStore tokenStore)
+            TokenStore tokenStore,
+            bool directorySpecified)
         {
             WorkingDirectory = workingDirectory;
             _metadataDirectory = metadataDirectory;
             _tokenStore = tokenStore;
+            DirectorySpecified = directorySpecified;
         }
 
         public async Task EnsureAsync()
@@ -49,6 +57,8 @@ namespace Serious.Abbot.CommandLine.Services
         
         public bool Exists => WorkingDirectory.Exists;
 
+        public bool DirectorySpecified { get; }
+        
         /// <summary>
         /// Get a skill environment for the specified skill.
         /// </summary>

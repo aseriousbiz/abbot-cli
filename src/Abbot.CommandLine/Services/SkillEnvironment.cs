@@ -130,7 +130,7 @@ namespace Serious.Abbot.CommandLine.Services
         {
             if (!environment.IsInitialized)
             {
-                var directoryType = environment.WorkingDirectory.FullName == "." ? "current" : "specified";
+                var directoryType = environment.DirectorySpecified ? "specified" : "current";
                 return CodeResult.Fail($"The {directoryType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
             }
             

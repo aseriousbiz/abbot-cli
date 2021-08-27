@@ -115,7 +115,7 @@ public class SkillEnvironmentTests
         public async Task RetrievesTheLocalCodeForEachLanguage(CodeLanguage language)
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory);
+            var environment = new DevelopmentEnvironment(directory, true);
             await environment.EnsureAsync();
             var skillEnvironment = new SkillEnvironment(directory.GetSubdirectory("my-skill"));
             var response = new SkillGetResponse
@@ -139,7 +139,7 @@ public class SkillEnvironmentTests
         public async Task StripsLoadDirective(CodeLanguage language)
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory);
+            var environment = new DevelopmentEnvironment(directory, true);
             await environment.EnsureAsync();
             var skillEnvironment = new SkillEnvironment(directory.GetSubdirectory("my-skill"));
             var response = new SkillGetResponse
@@ -156,25 +156,27 @@ public class SkillEnvironmentTests
             Assert.Equal("# This is the code", codeResult.Code);
         }
 
-        [Fact]
-        public async Task ReportsErrorWhenEnvironmentDoesNotExist()
+        [Theory]
+        [InlineData(true, "specified")]
+        [InlineData(false, "current")]
+        public async Task ReportsErrorWhenEnvironmentDoesNotExist(bool directorySpecified, string expectedType)
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory);
+            var environment = new DevelopmentEnvironment(directory, directorySpecified);
             var skillEnvironment = new SkillEnvironment(directory.GetSubdirectory("my-skill"));
             
             var codeResult = await skillEnvironment.GetCodeAsync(environment);
             
             Assert.False(codeResult.IsSuccess);
             Assert.Null(codeResult.Code);
-            Assert.Equal("The specified directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`", codeResult.ErrorMessage);
+            Assert.Equal($"The {expectedType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`", codeResult.ErrorMessage);
         }
         
         [Fact]
         public async Task ReportsErrorWhenSkillDirectoryDoesNotExist()
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory);
+            var environment = new DevelopmentEnvironment(directory, true);
             await environment.EnsureAsync();
             var skillEnvironment = new SkillEnvironment(directory.GetSubdirectory("my-skill"));
             
@@ -189,7 +191,7 @@ public class SkillEnvironmentTests
         public async Task ReportsErrorWhenCodeDoesNotExist()
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory);
+            var environment = new DevelopmentEnvironment(directory, true);
             await environment.EnsureAsync();
             var skillDirectory = directory.GetSubdirectory("my-skill");
             var skillEnvironment = new SkillEnvironment(skillDirectory);
