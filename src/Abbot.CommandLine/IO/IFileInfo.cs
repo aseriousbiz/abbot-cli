@@ -1,15 +1,9 @@
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Serious.Abbot.CommandLine.IO
 {
     public interface IFileInfo : IFileSystemInfo
     {
-        /// <summary>
-        /// Creates the file and returns a stream to write to it.
-        /// </summary>
-        FileStream Create();
-
         /// <summary>
         /// Reads all the bytes of the file into a byte array.
         /// </summary>
@@ -27,5 +21,11 @@ namespace Serious.Abbot.CommandLine.IO
         /// </summary>
         /// <param name="contents">The string to write to the file.</param>
         Task WriteAllTextAsync(string contents);
+
+        /// <summary>
+        /// Writes the bytes to the file.
+        /// </summary>
+        /// <param name="bytes">The bytes to write.</param>
+        ValueTask WriteAllBytesAsync(byte[] bytes);
     }
 }

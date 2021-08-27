@@ -1266,7 +1266,7 @@
       "abbot": {
         "type": "Project",
         "dependencies": {
-          "Abbot.Messages": "0.1.4",
+          "Abbot.Messages": "0.2.0",
           "Microsoft.AspNetCore.DataProtection": "5.0.9",
           "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
           "Microsoft.AspNetCore.DataProtection.Extensions": "5.0.9",

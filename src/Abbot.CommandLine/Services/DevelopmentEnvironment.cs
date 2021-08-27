@@ -17,8 +17,8 @@ namespace Serious.Abbot.CommandLine.Services
             : this(workingDirectory, workingDirectory.GetSubdirectory(".abbot"))
         {
         }
-        
-        public DevelopmentEnvironment(IDirectoryInfo workingDirectory, IDirectoryInfo metadataDirectory)
+
+        DevelopmentEnvironment(IDirectoryInfo workingDirectory, IDirectoryInfo metadataDirectory)
             : this(
                 workingDirectory,
                 metadataDirectory,
@@ -26,7 +26,7 @@ namespace Serious.Abbot.CommandLine.Services
         {
         }
 
-        public DevelopmentEnvironment(
+        DevelopmentEnvironment(
             IDirectoryInfo workingDirectory,
             IDirectoryInfo metadataDirectory,
             TokenStore tokenStore)

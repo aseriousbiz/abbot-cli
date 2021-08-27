@@ -22,24 +22,27 @@ namespace Serious.Abbot.CommandLine.IO
         public bool Exists => _fileInfo.Exists;
         
         public string FullName => _fileInfo.FullName;
-
-        public FileStream Create() => _fileInfo.Create();
-
+        
         public Task<byte[]> ReadAllBytesAsync() => File.ReadAllBytesAsync(FullName);
         
         public Task<string> ReadAllTextAsync() => File.ReadAllTextAsync(FullName);
+        
         public async Task WriteAllTextAsync(string contents)
         {
             // can't use WriteAllText because on windows File.Exists returns false if the file is hidden,
             // and then .net decides to create a new file and it all ends in tears
-            await using (var fs = new FileStream(FullName, FileMode.OpenOrCreate))
+            await using var fs = new FileStream(FullName, FileMode.OpenOrCreate);
+            await using (var tw = new StreamWriter(fs, Encoding.UTF8, 1024, true))
             {
-                await using (var tw = new StreamWriter(fs, Encoding.UTF8, 1024, true))
-                {
-                    await tw.WriteAsync(contents);
-                }
-                fs.SetLength(fs.Position);
+                await tw.WriteAsync(contents);
             }
+            fs.SetLength(fs.Position);
+        }
+
+        public ValueTask WriteAllBytesAsync(byte[] bytes)
+        {
+            using var stream = _fileInfo.Create();
+            return stream.WriteAsync(bytes);
         }
 
         public override string ToString() => _fileInfo.FullName;

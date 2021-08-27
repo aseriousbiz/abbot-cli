@@ -19,8 +19,7 @@ namespace Serious.Abbot.CommandLine.Services
         public async Task StoreTokenAsync(string token)
         {
             var encrypted = _protector.Protect(token);
-            await using var writer = _tokenFile.Create();
-            await writer.WriteAsync(encrypted);
+            await _tokenFile.WriteAllBytesAsync(encrypted);
         }
         
         public async Task<string?> RetrieveTokenAsync()
