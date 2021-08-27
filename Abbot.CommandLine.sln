@@ -28,6 +28,7 @@ ProjectSection(SolutionItems) = preProject
 	Directory.Build.props = Directory.Build.props
 	.gitignore = .gitignore
 	.gitattributes = .gitattributes
+	.github\workflows\main.yml = .github\workflows\main.yml
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{6D54D649-A2CC-4277-99B8-2FE29F0DA989}"

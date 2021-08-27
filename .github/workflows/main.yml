@@ -1,0 +1,37 @@
+name: Build and deploy Abbot to Azure - abbot
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  APP_SOLUTION: Abbot.CommandLine.sln
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v2
+    
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.301
+
+    - name: Restore NuGet Packages
+      run: dotnet restore ${{ env.APP_SOLUTION }} --locked-mode
+
+    - name: Build Solution
+      run: dotnet build ${{ env.APP_SOLUTION }} --configuration Release --no-restore --nologo
+
+    - name: Run Tests
+      run: dotnet test ${{ env.APP_SOLUTION }} --configuration Release --no-build --nologo
