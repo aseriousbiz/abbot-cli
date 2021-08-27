@@ -12,16 +12,14 @@ namespace Serious.Abbot.CommandLine.Services
 {
     public class SkillEnvironment
     {
-        readonly string _skill;
         readonly IDirectoryInfo _skillDirectory;
         readonly IDirectoryInfo _skillMetaDirectory;
         readonly IFileInfo _concurrencyFile;
         readonly IFileInfo _languageFile;
         CodeLanguage? _language;
 
-        public SkillEnvironment(string skill, IDirectoryInfo skillDirectory)
+        public SkillEnvironment(IDirectoryInfo skillDirectory)
         {
-            _skill = skill;
             _skillDirectory = skillDirectory;
             _skillMetaDirectory = _skillDirectory.GetSubdirectory(".meta");
             _concurrencyFile = _skillMetaDirectory.GetFile(".concurrency");
@@ -88,7 +86,7 @@ namespace Serious.Abbot.CommandLine.Services
             return _languageFile.WriteAllTextAsync(language.ToString());
         }
 
-        public Task WriteCodeAsync(string code, CodeLanguage language)
+        Task WriteCodeAsync(string code, CodeLanguage language)
         {
             var codeFile = GetCodeFile(language);
             var contents = language is CodeLanguage.CSharp

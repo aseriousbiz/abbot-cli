@@ -56,7 +56,7 @@ namespace Serious.Abbot.CommandLine.Services
         public SkillEnvironment GetSkillEnvironment(string skill)
         {
             var skillDirectory = WorkingDirectory.GetSubdirectory(skill);
-            return new SkillEnvironment(skill, skillDirectory);
+            return new SkillEnvironment(skillDirectory);
         }
 
         public bool IsInitialized => _metadataDirectory.Exists;
