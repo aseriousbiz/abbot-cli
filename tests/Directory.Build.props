@@ -1,0 +1,9 @@
+<Project>
+    <PropertyGroup>
+        <Company>A Serious Business, Inc.</Company>
+        <Copyright>Copyright © 2021</Copyright>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <WarningsAsErrors>true</WarningsAsErrors>
+        <RunAnalyzers>false</RunAnalyzers>
+    </PropertyGroup>
+</Project>

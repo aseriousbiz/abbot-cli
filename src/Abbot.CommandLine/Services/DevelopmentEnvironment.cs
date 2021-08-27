@@ -1,60 +1,79 @@
-using System.IO;
 using System.Threading.Tasks;
+using Serious.Abbot.CommandLine.Editors;
+using Serious.Abbot.CommandLine.IO;
 
 namespace Serious.Abbot.CommandLine.Services
 {
+    /// <summary>
+    /// Represents an initialized Abbot Skills Folder. This is the root folder where skill development occurs. Each
+    /// sub-folder of an Abbot Skills Folder represents a skill to be edited.
+    /// </summary>
     public class DevelopmentEnvironment
     {
-        readonly DirectoryInfo _metadataDirectory;
+        readonly IDirectoryInfo _metadataDirectory;
         readonly TokenStore _tokenStore;
 
-        public static async Task<DevelopmentEnvironment> EnsureEnvironmentAsync(string directory)
+        /// <summary>
+        /// Constructs an instance of a Development Environment.
+        /// </summary>
+        /// <param name="workingDirectory">The working directory.</param>
+        /// <param name="directorySpecified">Whether the working directory was specified or is the current directory.</param>
+        public DevelopmentEnvironment(IDirectoryInfo workingDirectory, bool directorySpecified)
+            : this(workingDirectory, workingDirectory.GetSubdirectory(".abbot"), directorySpecified)
         {
-            var environment = GetEnvironment(directory);
-            
-            var workingDir = environment.WorkingDirectory;
-            if (!workingDir.Exists)
-            {
-                workingDir.Create();
-            }
-
-            var metadataDir = environment._metadataDirectory;
-            if (!metadataDir.Exists)
-            {
-                metadataDir.Create();
-                metadataDir.Attributes |= FileAttributes.Hidden;
-            }
-
-            await environment.EnsureGitIgnoreAsync();
-            
-            return environment;
-        }
-        
-        public static DevelopmentEnvironment GetEnvironment(string directory)
-        {
-            if (directory is { Length: 0 })
-            {
-                directory = ".";
-            }
-            var workingDir = new DirectoryInfo(directory);
-            var metadataDir = new DirectoryInfo(Path.Combine(workingDir.FullName, ".abbot"));
-            var environment = new DevelopmentEnvironment(workingDir, metadataDir);
-            return environment;
         }
 
-        DevelopmentEnvironment(DirectoryInfo workingDirectory, DirectoryInfo metadataDirectory)
+        DevelopmentEnvironment(IDirectoryInfo workingDirectory, IDirectoryInfo metadataDirectory, bool directorySpecified)
+            : this(
+                workingDirectory,
+                metadataDirectory,
+                new TokenStore(new TokenProtector(), metadataDirectory.GetFile("TOKEN")),
+                directorySpecified)
+        {
+        }
+
+        DevelopmentEnvironment(
+            IDirectoryInfo workingDirectory,
+            IDirectoryInfo metadataDirectory,
+            TokenStore tokenStore,
+            bool directorySpecified)
         {
             WorkingDirectory = workingDirectory;
             _metadataDirectory = metadataDirectory;
-            var tokenFile = new FileInfo(Path.Combine(_metadataDirectory.FullName, "TOKEN"));
-            _tokenStore = new TokenStore(new TokenProtector(), tokenFile);
+            _tokenStore = tokenStore;
+            DirectorySpecified = directorySpecified;
+        }
+
+        public async Task EnsureAsync()
+        {
+            WorkingDirectory.Create();
+            _metadataDirectory.Create();
+            _metadataDirectory.Hide();
+            
+            await EnsureGitIgnoreAsync();
+            await EnsureReferencesFileAsync();
+            await EnsureOmniSharpConfigAsync();
+        }
+        
+        public bool Exists => WorkingDirectory.Exists;
+
+        public bool DirectorySpecified { get; }
+        
+        /// <summary>
+        /// Get a skill environment for the specified skill.
+        /// </summary>
+        /// <param name="skill">The name of the skill.</param>
+        public SkillEnvironment GetSkillEnvironment(string skill)
+        {
+            var skillDirectory = WorkingDirectory.GetSubdirectory(skill);
+            return new SkillEnvironment(skillDirectory);
         }
 
         public bool IsInitialized => _metadataDirectory.Exists;
         
         public bool IsAuthenticated => !_tokenStore.Empty;
 
-        public DirectoryInfo WorkingDirectory { get; }
+        public IDirectoryInfo WorkingDirectory { get; }
 
         /// <summary>
         /// The stored API Key token.
@@ -75,15 +94,23 @@ namespace Serious.Abbot.CommandLine.Services
 
         async Task EnsureGitIgnoreAsync()
         {
-            var gitignore = new FileInfo(Path.Combine(_metadataDirectory.FullName, ".gitignore"));
+            var gitignore = _metadataDirectory.GetFile(".gitignore");
             if (gitignore.Exists)
             {
                 return;
             }
 
-            await using var stream = gitignore.OpenWrite();
-            await using var writer = new StreamWriter(stream);
-            await writer.WriteLineAsync("*");
+            await gitignore.WriteAllTextAsync("*");
+        }
+        
+        Task EnsureReferencesFileAsync()
+        {
+            return Omnisharp.WriteRspFileAsync(_metadataDirectory);
+        }
+        
+        Task EnsureOmniSharpConfigAsync()
+        {
+            return Omnisharp.WriteConfigFileAsync(WorkingDirectory, string.Empty);
         }
     }
 }

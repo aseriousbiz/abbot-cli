@@ -28,7 +28,12 @@ ProjectSection(SolutionItems) = preProject
 	Directory.Build.props = Directory.Build.props
 	.gitignore = .gitignore
 	.gitattributes = .gitattributes
+	.github\workflows\main.yml = .github\workflows\main.yml
 EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{6D54D649-A2CC-4277-99B8-2FE29F0DA989}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1FDC81E3-2D5D-4C4E-B3FF-46DDDC31DA4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,9 +72,22 @@ Global
 		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Release|x64.Build.0 = Release|Any CPU
 		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Release|x86.ActiveCfg = Release|Any CPU
 		{15AEEED6-4A2A-44DD-B573-D40E9F17E349}.Release|x86.Build.0 = Release|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Debug|x64.Build.0 = Debug|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Debug|x86.Build.0 = Debug|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Release|x64.ActiveCfg = Release|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Release|x64.Build.0 = Release|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Release|x86.ActiveCfg = Release|Any CPU
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A519EBE0-83F2-4467-9C93-FC2C0FBE7FBC} = {65895949-768B-4BBD-9912-ADC6A2A972A7}
 		{15AEEED6-4A2A-44DD-B573-D40E9F17E349} = {65895949-768B-4BBD-9912-ADC6A2A972A7}
+		{6D54D649-A2CC-4277-99B8-2FE29F0DA989} = {1FDC81E3-2D5D-4C4E-B3FF-46DDDC31DA4D}
 	EndGlobalSection
 EndGlobal

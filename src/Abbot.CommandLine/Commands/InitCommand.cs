@@ -8,19 +8,24 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class InitCommand : Command
     {
-        public InitCommand() : base("init", "Set up a local Abbot development directory")
+        readonly IDevelopmentEnvironmentFactory _developmentEnvironmentFactory;
+
+        public InitCommand(IDevelopmentEnvironmentFactory developmentEnvironmentFactory)
+            : base("init", "Set up a local Abbot development directory")
         {
-            var directoryOption = new Option<string>("--directory", "The directory to set up as a local Abbot development environment. This will create a `.abbot` folder in that directory. If the directory does not exist, this creates the directory.");
+            _developmentEnvironmentFactory = developmentEnvironmentFactory;
+            var directoryOption = new Option<string?>("--directory", "The directory to set up as a local Abbot development environment. This will create a `.abbot` folder in that directory. If the directory does not exist, this creates the directory.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
-            Handler = CommandHandler.Create<string>(HandleInitCommandAsync);
+            Handler = CommandHandler.Create<string?>(HandleInitCommandAsync);
         }
 
-        static async Task<int> HandleInitCommandAsync(string directory)
+        async Task<int> HandleInitCommandAsync(string? directory)
         {
-            var dir = await DevelopmentEnvironment.EnsureEnvironmentAsync(directory);
+            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
+            await environment.EnsureAsync();
 
-            Console.WriteLine(Messages.Initialized_Abbot_Directory, dir.WorkingDirectory.FullName);
+            Console.WriteLine(Messages.Initialized_Abbot_Directory, environment.WorkingDirectory);
             return 0;
         }
     }

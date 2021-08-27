@@ -1,9 +1,6 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Serious.Abbot.CommandLine.Services;
 using Serious.Abbot.Messages;
@@ -12,24 +9,29 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class GetCommand : Command
     {
-        public GetCommand() : base("get", "Downloads the specified skill code into a directory named after the skill.")
+        readonly IDevelopmentEnvironmentFactory _developmentEnvironmentFactory;
+        public const string SkillMetaFolder = ".meta";
+        
+        public GetCommand(IDevelopmentEnvironmentFactory developmentEnvironmentFactory)
+            : base("get", "Downloads the specified skill code into a directory named after the skill.")
         {
+            _developmentEnvironmentFactory = developmentEnvironmentFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
-            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
             var forceOption = new Option<bool>("--force", "If true, overwrites the local skill code if it exists even if it has changes.");
             forceOption.AddAlias("-f");
             AddOption(forceOption);
-            Handler = CommandHandler.Create<string, string, bool>(HandleDownloadCommandAsync);
+            Handler = CommandHandler.Create<string, string?, bool>(HandleDownloadCommandAsync);
         }
 
-        static async Task<int> HandleDownloadCommandAsync(string skill, string directory, bool force)
+        async Task<int> HandleDownloadCommandAsync(string skill, string? directory, bool force)
         {
-            var environment = DevelopmentEnvironment.GetEnvironment(directory);
+            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
             if (!environment.IsInitialized)
             {
-                var directoryType = directory == "." ? "current" : "specified";
+                var directoryType = environment.DirectorySpecified ? "specified" : "current";
                 Console.WriteLine($"The {directoryType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
                 return 1;
             }
@@ -38,16 +40,13 @@ namespace Serious.Abbot.CommandLine.Commands
             if (skillInfo is null)
             {
                 return 1;
-            }      
-            
-            var extension = skillInfo.Language.GetFileExtension();
-            var skillDirectoryPath = Path.Combine(environment.WorkingDirectory.FullName, skill);
-            var codeFilePath = Path.Combine(skillDirectoryPath, $"{skill}.{extension}");
-            var concurrencyFilePath = Path.Combine(skillDirectoryPath, ".concurrency");
+            }
 
-            bool directoryExists = Directory.Exists(skillDirectoryPath);
+            var skillEnvironment = environment.GetSkillEnvironment(skill);
+
+            bool directoryExists = skillEnvironment.Exists;
             
-            if (!force && directoryExists && await HasConcurrencyConflictAsync(codeFilePath, concurrencyFilePath))
+            if (!force && skillEnvironment.Exists && await skillEnvironment.HasLocalChangesAsync(skillInfo.Language))
             {
                 Console.Write("You have local changes to the code that would be overwritten by getting the latest code.\nOverwrite local changes? Hit Y to overwrite, any other key to cancel: ");
                 var key = Console.ReadKey();
@@ -60,39 +59,16 @@ namespace Serious.Abbot.CommandLine.Commands
                 Console.WriteLine("\nOverwriting local changes");
             }
 
-            await WriteSkillFilesAsync(skillDirectoryPath, codeFilePath, skillInfo, concurrencyFilePath);
+            await skillEnvironment.CreateAsync(skillInfo);
 
             var verb = directoryExists ? "Updated" : "Created";
             
-            Console.WriteLine(@$"{verb} skill directory {skillDirectoryPath}
+            Console.WriteLine(@$"{verb} skill directory {skillEnvironment.WorkingDirectory}
 Edit the code in the directory. When you are ready to deploy it, run 
 
     abbot deploy {skill}
 ");
             return 0;
-        }
-
-        static async Task WriteSkillFilesAsync(
-            string skillDirectoryPath,
-            string codeFilePath,
-            SkillGetResponse skillInfo,
-            string concurrencyFilePath)
-        {
-            Directory.CreateDirectory(skillDirectoryPath); // noop if directory already exists.
-            await File.WriteAllTextAsync(codeFilePath, skillInfo.Code);
-
-            // can't use WriteAllText because on windows File.Exists returns false if the file is hidden,
-            // and then .net decides to create a new file and it all ends in tears
-            using (var fs = new FileStream(concurrencyFilePath, FileMode.OpenOrCreate))
-            {
-                using (var tw = new StreamWriter(fs, Encoding.UTF8, 1024, true))
-                {
-                    tw.Write(skillInfo.CodeHash);
-                }
-                fs.SetLength(fs.Position);
-            }
-            var concurrencyFile = new FileInfo(concurrencyFilePath);
-            concurrencyFile.Attributes |= FileAttributes.Hidden;
         }
 
         static async Task<SkillGetResponse?> GetSkillInfoAsync(string skill, DevelopmentEnvironment environment)
@@ -111,36 +87,6 @@ Edit the code in the directory. When you are ready to deploy it, run
             }
 
             return response.Content;
-        }
-
-        // Returns true if the code was updated on the server since the version stored locally.
-        static async Task<bool> HasConcurrencyConflictAsync(string codeFilePath, string concurrencyFilePath)
-        {
-            if (!File.Exists(codeFilePath))
-            {
-                return false;
-            }
-            
-            var existingCode = await File.ReadAllTextAsync(codeFilePath);
-
-            var fi = new FileInfo(concurrencyFilePath);
-            // Check concurrency, and don't trust File.Exists, it lies to you
-            var existingCodeHash = fi.Exists
-                ? await File.ReadAllTextAsync(concurrencyFilePath)
-                : string.Empty;
-
-            var codeHash = ComputeSHA1Hash(existingCode);
-            return existingCodeHash != codeHash;
-        }
-        
-        static string ComputeSHA1Hash(string value)
-        {
-            // Using this for checksums
-#pragma warning disable CA5350
-            using var sha1 = new SHA1Managed();
-#pragma warning restore CA5350
-            var encoded = sha1.ComputeHash(Encoding.UTF8.GetBytes(value));
-            return Convert.ToBase64String(encoded);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.CommandLine;
 using System.Resources;
 using Serious.Abbot.CommandLine.Commands;
+using Serious.Abbot.CommandLine.Services;
 
 [assembly:CLSCompliant(false)]
 [assembly:NeutralResourcesLanguage("en")]
@@ -22,16 +23,18 @@ namespace Serious.Abbot.CommandLine
         /// <returns>0 on success, an exit code on failure.</returns>
         static int Main(string[] args)
         {
+            var factory = new DevelopmentEnvironmentFactory();
+            var runCommand = new RunCommand(factory);
             // Create a root command with some options
             var rootCommand = new RootCommand
             {
-                new AuthCommand(),
-                new GetCommand(),
-                new InitCommand(),
-                new DeployCommand(),
-                new ReplCommand(),
-                new RunCommand(),
-                new StatusCommand()
+                new AuthCommand(factory),
+                new GetCommand(factory),
+                new InitCommand(factory),
+                new DeployCommand(factory),
+                new ReplCommand(runCommand),
+                runCommand,
+                new StatusCommand(factory)
             };
 
             rootCommand.Description = "Abbot command line. Use this to set up a local Abbot editing environment. To get started, run `abbot init .` in a directory where you want to edit skills.";

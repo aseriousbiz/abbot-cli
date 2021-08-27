@@ -1,14 +1,14 @@
-using System.IO;
 using System.Threading.Tasks;
+using Serious.Abbot.CommandLine.IO;
 
 namespace Serious.Abbot.CommandLine.Services
 {
     public class TokenStore
     {
         readonly TokenProtector _protector;
-        readonly FileInfo _tokenFile;
+        readonly IFileInfo _tokenFile;
 
-        public TokenStore(TokenProtector protector, FileInfo tokenFile)
+        public TokenStore(TokenProtector protector, IFileInfo tokenFile)
         {
             _protector = protector;
             _tokenFile = tokenFile;
@@ -19,8 +19,7 @@ namespace Serious.Abbot.CommandLine.Services
         public async Task StoreTokenAsync(string token)
         {
             var encrypted = _protector.Protect(token);
-            await using var writer = _tokenFile.Create();;
-            await writer.WriteAsync(encrypted);
+            await _tokenFile.WriteAllBytesAsync(encrypted);
         }
         
         public async Task<string?> RetrieveTokenAsync()
@@ -29,12 +28,10 @@ namespace Serious.Abbot.CommandLine.Services
             {
                 return null;
             }
-            var encrypted = await File.ReadAllBytesAsync(_tokenFile.FullName);
-            if (encrypted.Length == 0)
-            {
-                return null;
-            }
-            return _protector.Unprotect(encrypted);
+            var encrypted = await _tokenFile.ReadAllBytesAsync();
+            return encrypted.Length > 0
+                ? _protector.Unprotect(encrypted)
+                : null;
         }
     }
 }

@@ -33,13 +33,10 @@ namespace Serious.Abbot.CommandLine.Services
                 return null;
             }
             var unencrypted = _protector.Unprotect(encrypted);
-            if (unencrypted.Length == 0)
-            {
-                return null;
-            }
-            
             // TODO: Handle or propagate CryptographicException?
-            return Encoding.UTF8.GetString(unencrypted);
+            return unencrypted.Length > 0
+                ? Encoding.UTF8.GetString(unencrypted)
+                : null;
         }
     }
 }

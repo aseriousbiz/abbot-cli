@@ -9,25 +9,31 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class AuthCommand : Command
     {
+        readonly IDevelopmentEnvironmentFactory _developmentEnvironmentFactory;
         const string TokenPage = $"{Program.Website}/account/apikeys";
 
-        public AuthCommand() : base("auth", "Authenticate the abbot command line")
+        public AuthCommand(IDevelopmentEnvironmentFactory developmentEnvironmentFactory)
+            : base("auth", "Authenticate the abbot command line")
         {
-            var directoryOption = new Option<string>("--directory", "The directory to authenticate as a local Abbot development environment. If the directory is not an Abbot development environment, this will set it up as one and then authenticate.");
+            _developmentEnvironmentFactory = developmentEnvironmentFactory;
+            
+            var directoryOption = new Option<string?>("--directory", "The directory to authenticate as a local Abbot development environment. If the directory is not an Abbot development environment, this will set it up as one and then authenticate.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
             var tokenOption = new Option<string>("--token", $"The API Key token created at {TokenPage}.");
             tokenOption.AddAlias("-t");
             AddOption(tokenOption);
-            Handler = CommandHandler.Create<string, string>(HandleAuthenticateCommandAsync);
+            Handler = CommandHandler.Create<string?, string>(HandleAuthenticateCommandAsync);
         }
         
         /// <summary>
         /// Initiates authentication by launching the browser to the tokens page.
         /// </summary>
-        static async Task<int> HandleAuthenticateCommandAsync(string directory, string token)
+        async Task<int> HandleAuthenticateCommandAsync(string? directory, string token)
         {
-            var environment = await DevelopmentEnvironment.EnsureEnvironmentAsync(directory);
+            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
+            await environment.EnsureAsync();
+            
             if (token is { Length: > 0 })
             {
                 await environment.SetTokenAsync(token);
