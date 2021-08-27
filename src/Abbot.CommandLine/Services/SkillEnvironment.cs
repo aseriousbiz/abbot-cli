@@ -139,7 +139,7 @@ namespace Serious.Abbot.CommandLine.Services
         IFileInfo GetCodeFile(CodeLanguage language)
         {
             var extension = language.GetFileExtension();
-            return _skillDirectory.GetFile($"{_skill}.{extension}");
+            return _skillDirectory.GetFile($"main.{extension}");
         }
 
         static string ComputeSHA1Hash(string value)
