@@ -2,7 +2,6 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.Editors;
 using Serious.Abbot.CommandLine.Services;
 using Serious.Abbot.Messages;
 
@@ -17,39 +16,25 @@ namespace Serious.Abbot.CommandLine.Commands
         {
             _developmentEnvironmentFactory = developmentEnvironmentFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
-            var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
+            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             directoryOption.AddAlias("-d");
             AddOption(directoryOption);
             Handler = CommandHandler.Create<string, string>(HandleUploadCommandAsync);
         }
         
-        async Task<int> HandleUploadCommandAsync(string skill, string directory)
+        async Task<int> HandleUploadCommandAsync(string skill, string? directory)
         {
-            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
-            if (!environment.IsInitialized)
-            {
-                var directoryType = directory == "." ? "current" : "specified";
-                Console.WriteLine($"The {directoryType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
-                return 1;
-            }
-
+            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory ?? ".");
             var skillEnvironment = environment.GetSkillEnvironment(skill);
+
+            var codeResult = await skillEnvironment.GetCodeAsync(environment);
+            if (!codeResult.IsSuccess)
+            {
+                await Console.Error.WriteLineAsync(codeResult.ErrorMessage);
+                return 1;
+            }
             
-            if (!skillEnvironment.Exists)
-            {
-                Console.WriteLine($"The directory {skillEnvironment.WorkingDirectory} does not exist. Have you run `abbot download {skill}` yet?");
-                return 1;
-            }
-
-            var codeFile = await skillEnvironment.GetCodeFile();
-            if (codeFile is null)
-            {
-                Console.WriteLine($"Did not find a code file in {skillEnvironment.WorkingDirectory}");
-                return 1;
-            }
-
-            var code = await codeFile.ReadAllTextAsync();
-            code = Omnisharp.RemoveGlobalsDirective(code);
+            var code = codeResult.Code!;
 
             var previousCodeHash = await skillEnvironment.ReadConcurrencyFileAsync();
 

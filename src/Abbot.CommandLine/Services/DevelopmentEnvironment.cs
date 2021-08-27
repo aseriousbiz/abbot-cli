@@ -46,7 +46,7 @@ namespace Serious.Abbot.CommandLine.Services
             await EnsureReferencesFileAsync();
             await EnsureOmniSharpConfigAsync();
         }
-
+        
         public bool Exists => WorkingDirectory.Exists;
 
         /// <summary>

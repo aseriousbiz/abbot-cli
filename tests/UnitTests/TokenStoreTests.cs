@@ -13,7 +13,7 @@ public class TokenStoreTests
         public async Task StoresTokenInAFile()
         {
             var tokenProtector = new FakeTokenProtector();
-            var tokenFile = new FakeFileInfo();
+            var tokenFile = new FakeFileInfo("./TOKEN");
             var tokenStore = new TokenStore(tokenProtector, tokenFile);
 
             await tokenStore.StoreTokenAsync("SOME TOKEN");
@@ -34,7 +34,7 @@ public class TokenStoreTests
         public async Task ReturnsNullWhenFileDoesNotExist()
         {
             var tokenProtector = new FakeTokenProtector();
-            var tokenFile = new FakeFileInfo();
+            var tokenFile = new FakeFileInfo("./some-file");
             var tokenStore = new TokenStore(tokenProtector, tokenFile);
 
             var result = await tokenStore.RetrieveTokenAsync();

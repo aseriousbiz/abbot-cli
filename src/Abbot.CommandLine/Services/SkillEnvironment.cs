@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -24,7 +25,11 @@ namespace Serious.Abbot.CommandLine.Services
             _skillMetaDirectory = _skillDirectory.GetSubdirectory(".meta");
             _concurrencyFile = _skillMetaDirectory.GetFile(".concurrency");
             _languageFile = _skillMetaDirectory.GetFile(".language");
+            SkillName = Path.GetFileName(skillDirectory.FullName)
+                ?? throw new InvalidOperationException("Skill directory doesn't have a name?!");
         }
+
+        public string SkillName { get; }
 
         public bool Exists => _skillDirectory.Exists;
 
@@ -117,7 +122,35 @@ namespace Serious.Abbot.CommandLine.Services
             return existingCodeHash != codeHash;
         }
 
-        public async Task<IFileInfo?> GetCodeFile()
+        /// <summary>
+        /// Used to retrieve the code for the skill. This is used when running or deploying the code.
+        /// </summary>
+        /// <param name="environment">The Abbot Skills development environment.</param>
+        public async Task<CodeResult> GetCodeAsync(DevelopmentEnvironment environment)
+        {
+            if (!environment.IsInitialized)
+            {
+                var directoryType = environment.WorkingDirectory.FullName == "." ? "current" : "specified";
+                return CodeResult.Fail($"The {directoryType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
+            }
+            
+            if (!Exists)
+            {
+                return CodeResult.Fail($"The directory {WorkingDirectory} does not exist. Have you run `abbot download {SkillName}` yet?");
+            }
+
+            var codeFile = await GetCodeFile();
+            if (codeFile is null or {Exists: false})
+            {
+                return CodeResult.Fail($"Did not find a code file in {WorkingDirectory}");
+            }
+
+            var code = await codeFile.ReadAllTextAsync();
+            code = Omnisharp.RemoveGlobalsDirective(code);
+            return CodeResult.Success(code);
+        }
+
+        async Task<IFileInfo?> GetCodeFile()
         {
             var language = _language ??= await ReadLanguageAsync();
             return language.HasValue

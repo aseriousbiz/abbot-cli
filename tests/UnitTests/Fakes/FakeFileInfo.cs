@@ -4,20 +4,14 @@ using Serious.Abbot.CommandLine.IO;
 
 namespace UnitTests.Fakes
 {
-    public class FakeFileInfo : IFileInfo
+    public class FakeFileInfo : FakeFileSystemInfo, IFileInfo
     {
         byte[]? _stored;
         string? _storedText;
         
-        public bool Hidden { get; private set; }
-
-        public void Hide()
+        public FakeFileInfo(string path) : base(path)
         {
-            Hidden = true;
         }
-
-        public bool Exists { get; set; }
-        public string FullName { get; set; }
 
         public Task<byte[]> ReadAllBytesAsync()
         {

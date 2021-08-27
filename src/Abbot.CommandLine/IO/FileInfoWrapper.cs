@@ -4,24 +4,15 @@ using System.Threading.Tasks;
 
 namespace Serious.Abbot.CommandLine.IO
 {
-    public class FileInfoWrapper : IFileInfo
+    public class FileInfoWrapper : FileSystemInfoWrapper<FileInfo>, IFileInfo
     {
-        readonly FileInfo _fileInfo;
-
         public FileInfoWrapper(string path) : this(new FileInfo(path))
         {
         }
 
-        public FileInfoWrapper(FileInfo fileInfo)
+        FileInfoWrapper(FileInfo fileInfo) : base(fileInfo)
         {
-            _fileInfo = fileInfo;
         }
-
-        public void Hide() => _fileInfo.Attributes |= FileAttributes.Hidden;
-
-        public bool Exists => _fileInfo.Exists;
-        
-        public string FullName => _fileInfo.FullName;
         
         public Task<byte[]> ReadAllBytesAsync() => File.ReadAllBytesAsync(FullName);
         
@@ -41,10 +32,8 @@ namespace Serious.Abbot.CommandLine.IO
 
         public ValueTask WriteAllBytesAsync(byte[] bytes)
         {
-            using var stream = _fileInfo.Create();
+            using var stream = InnerFileSystemInfo.Create();
             return stream.WriteAsync(bytes);
         }
-
-        public override string ToString() => _fileInfo.FullName;
     }
 }

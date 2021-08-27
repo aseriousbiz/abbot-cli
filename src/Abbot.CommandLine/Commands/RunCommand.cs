@@ -2,7 +2,6 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.Editors;
 using Serious.Abbot.CommandLine.Services;
 using Serious.Abbot.Messages;
 
@@ -28,31 +27,17 @@ namespace Serious.Abbot.CommandLine.Commands
         internal async Task<int> HandleRunCommandAsync(string skill, string arguments, string? directory)
         {
             var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory ?? ".");
-            if (!environment.IsInitialized)
-            {
-                var directoryType = directory == "." ? "current" : "specified";
-                Console.WriteLine($"The {directoryType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
-                return 1;
-            }
-
             var skillEnvironment = environment.GetSkillEnvironment(skill);
-            
-            if (!skillEnvironment.Exists)
-            {
-                Console.WriteLine($"The directory {skillEnvironment.WorkingDirectory} does not exist. Have you run `abbot download {skill}` yet?");
-                return 1;
-            }
 
-            var codeFile = await skillEnvironment.GetCodeFile();
-            if (codeFile is null)
+            var codeResult = await skillEnvironment.GetCodeAsync(environment);
+            if (!codeResult.IsSuccess)
             {
-                Console.WriteLine($"Did not find a code file in {skillEnvironment.WorkingDirectory}");
+                await Console.Error.WriteLineAsync(codeResult.ErrorMessage);
                 return 1;
             }
             
-            var code = await codeFile.ReadAllTextAsync();
-            code = Omnisharp.RemoveGlobalsDirective(code);
-            
+            var code = codeResult.Code!;
+
             var runRequest = new SkillRunRequest
             {
                 Code = code,
