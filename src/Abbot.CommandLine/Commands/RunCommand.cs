@@ -1,7 +1,6 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.IO;
 using System.Threading.Tasks;
 using Serious.Abbot.CommandLine.Editors;
 using Serious.Abbot.CommandLine.Services;
@@ -11,8 +10,12 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class RunCommand : Command
     {
-        public RunCommand() : base("run", "Runs your skill code in the skill runner")
+        readonly IDevelopmentEnvironmentFactory _developmentEnvironmentFactory;
+
+        public RunCommand(IDevelopmentEnvironmentFactory developmentEnvironmentFactory)
+            : base("run", "Runs your skill code in the skill runner")
         {
+            _developmentEnvironmentFactory = developmentEnvironmentFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill to run"));
             Add(new Argument<string>("arguments", () => ".", "The arguments to pass to the skill"));
             var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
@@ -22,9 +25,9 @@ namespace Serious.Abbot.CommandLine.Commands
             Handler = CommandHandler.Create<string, string, string?>(HandleRunCommandAsync);
         }
 
-        internal static async Task<int> HandleRunCommandAsync(string skill, string arguments, string? directory)
+        internal async Task<int> HandleRunCommandAsync(string skill, string arguments, string? directory)
         {
-            var environment = DevelopmentEnvironment.GetEnvironment(directory ?? ".");
+            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory ?? ".");
             if (!environment.IsInitialized)
             {
                 var directoryType = directory == "." ? "current" : "specified";
@@ -40,14 +43,14 @@ namespace Serious.Abbot.CommandLine.Commands
                 return 1;
             }
 
-            var codeFile = skillEnvironment.GetCodeFilePath();
+            var codeFile = skillEnvironment.GetCodeFile();
             if (codeFile is null)
             {
                 Console.WriteLine($"Did not find a code file in {skillEnvironment.WorkingDirectory}");
                 return 1;
             }
             
-            var code = await File.ReadAllTextAsync(codeFile);
+            var code = await codeFile.ReadAllTextAsync();
             code = Omnisharp.RemoveGlobalsDirective(code);
             
             var runRequest = new SkillRunRequest

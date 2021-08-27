@@ -1,7 +1,7 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
 using Serious.Abbot.CommandLine.Commands;
+using Serious.Abbot.CommandLine.IO;
 
 namespace Serious.Abbot.CommandLine.Editors
 {
@@ -16,7 +16,7 @@ namespace Serious.Abbot.CommandLine.Editors
         /// </summary>
         /// <param name="directory">The skill directory.</param>
         /// <param name="referencePath">Path to the reference.rsp file</param>
-        public static Task<FileInfo> WriteConfigFileAsync(string directory, string referencePath)
+        public static Task<IFileInfo> WriteConfigFileAsync(IDirectoryInfo directory, string referencePath)
         {
             string configJson = @"{
     ""script"": {
@@ -26,15 +26,14 @@ namespace Serious.Abbot.CommandLine.Editors
             ""RspFilePath"": """ + referencePath + @"""
         }
     }";
-            var path = Path.Combine(directory, "omnisharp.json");
-            return FileHelpers.WriteAllTextAsync(path, configJson);
+            return WriteFileAsync(directory, "omnisharp.json", configJson);
         }
 
         /// <summary>
         /// Writes a Roslyn RSP file into the directory.
         /// </summary>
         /// <param name="directory">The skill directory.</param>
-        public static Task<FileInfo> WriteRspFileAsync(string directory)
+        public static Task<IFileInfo> WriteRspFileAsync(IDirectoryInfo directory)
         {
             // TODO: We need to get this list from Abbot and not hard-code it.
             const string rsp = @"/u:System
@@ -53,15 +52,14 @@ namespace Serious.Abbot.CommandLine.Editors
 /u:System.Threading.Tasks
 /u:Serious.Abbot.Scripting
 /u:NodaTime";
-            var path = Path.Combine(directory, "references.rsp");
-            return FileHelpers.WriteAllTextAsync(path, rsp);
+            return WriteFileAsync(directory, "references.csp", rsp);
         }
 
         /// <summary>
         /// Write a globals.csx that's loaded by the main script. This allows us to specify NuGet package references.
         /// </summary>
         /// <param name="directory">The skill directory.</param>
-        public static Task<FileInfo> WriteGlobalsCsxFileAsync(string directory)
+        public static Task<IFileInfo> WriteGlobalsCsxFileAsync(IDirectoryInfo directory)
         {
             // TODO: We need to get this list from Abbot and not hard-code it.
             const string globals = @"#r ""nuget:NodaTime,3.0.5""
@@ -70,8 +68,14 @@ namespace Serious.Abbot.CommandLine.Editors
 
 var Bot = new Serious.Abbot.Scripting.Bot();
 ";
-            var path = Path.Combine(directory, "globals.csx");
-            return FileHelpers.WriteAllTextAsync(path, globals);
+            return WriteFileAsync(directory, "globals.csx", globals);
+        }
+
+        static async Task<IFileInfo> WriteFileAsync(IDirectoryInfo directory, string filename, string contents)
+        {
+            var file = directory.GetFile(filename);
+            await file.WriteAllTextAsync(contents);
+            return file;
         }
 
         const string LoadDirective = $"#load \"{GetCommand.SkillMetaFolder}/globals.csx\" // This is required for Intellisense in VS Code, etc. DO NOT TOUCH THIS LINE!\n";

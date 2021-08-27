@@ -9,10 +9,13 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class GetCommand : Command
     {
+        readonly IDevelopmentEnvironmentFactory _developmentEnvironmentFactory;
         public const string SkillMetaFolder = ".meta";
         
-        public GetCommand() : base("get", "Downloads the specified skill code into a directory named after the skill.")
+        public GetCommand(IDevelopmentEnvironmentFactory developmentEnvironmentFactory)
+            : base("get", "Downloads the specified skill code into a directory named after the skill.")
         {
+            _developmentEnvironmentFactory = developmentEnvironmentFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
             var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             directoryOption.AddAlias("-d");
@@ -23,9 +26,9 @@ namespace Serious.Abbot.CommandLine.Commands
             Handler = CommandHandler.Create<string, string, bool>(HandleDownloadCommandAsync);
         }
 
-        static async Task<int> HandleDownloadCommandAsync(string skill, string directory, bool force)
+        async Task<int> HandleDownloadCommandAsync(string skill, string directory, bool force)
         {
-            var environment = DevelopmentEnvironment.GetEnvironment(directory);
+            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
             if (!environment.IsInitialized)
             {
                 var directoryType = directory == "." ? "current" : "specified";

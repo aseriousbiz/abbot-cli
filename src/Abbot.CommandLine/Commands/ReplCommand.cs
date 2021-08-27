@@ -7,8 +7,12 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class ReplCommand : Command
     {
-        public ReplCommand() : base("repl", "Starts a REPL session for the specified skill. Hit CTRL+C to exit.")
+        readonly RunCommand _runCommand;
+
+        public ReplCommand(RunCommand runCommand)
+            : base("repl", "Starts a REPL session for the specified skill. Hit CTRL+C to exit.")
         {
+            _runCommand = runCommand;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill to run the REPL against"));
             var directoryOption = new Option<string>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
             directoryOption.AddAlias("-d");
@@ -16,7 +20,7 @@ namespace Serious.Abbot.CommandLine.Commands
             Handler = CommandHandler.Create<string, string>(HandleReplCommandAsync);
         }
 
-        static async Task<int> HandleReplCommandAsync(string skill, string directory)
+        async Task<int> HandleReplCommandAsync(string skill, string directory)
         {
             Console.Clear();
             Console.Write($@"
@@ -36,7 +40,7 @@ $ @abbot {skill} ");
             while (true)
             {
                 var args = Console.ReadLine();
-                if (await RunCommand.HandleRunCommandAsync(skill, args ?? string.Empty, directory) != 0)
+                if (await _runCommand.HandleRunCommandAsync(skill, args ?? string.Empty, directory) != 0)
                 {
                     break;
                 }

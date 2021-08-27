@@ -1,6 +1,6 @@
-using System.IO;
 using System.Threading.Tasks;
 using Serious.Abbot.CommandLine.Editors;
+using Serious.Abbot.CommandLine.IO;
 
 namespace Serious.Abbot.CommandLine.Services
 {
@@ -10,51 +10,44 @@ namespace Serious.Abbot.CommandLine.Services
     /// </summary>
     public class DevelopmentEnvironment
     {
-        readonly DirectoryInfo _metadataDirectory;
+        readonly IDirectoryInfo _metadataDirectory;
         readonly TokenStore _tokenStore;
 
-        public static async Task<DevelopmentEnvironment> EnsureEnvironmentAsync(string directory)
+        public DevelopmentEnvironment(IDirectoryInfo workingDirectory)
+            : this(workingDirectory, workingDirectory.GetSubdirectory(".abbot"))
         {
-            var environment = GetEnvironment(directory);
-            
-            var workingDir = environment.WorkingDirectory;
-            if (!workingDir.Exists)
-            {
-                workingDir.Create();
-            }
-
-            var metadataDir = environment._metadataDirectory;
-            if (!metadataDir.Exists)
-            {
-                metadataDir.Create();
-                metadataDir.Attributes |= FileAttributes.Hidden;
-            }
-
-            await environment.EnsureGitIgnoreAsync();
-            await environment.EnsureReferencesFileAsync();
-            await environment.EnsureOmniSharpConfigAsync();
-            return environment;
         }
         
-        public static DevelopmentEnvironment GetEnvironment(string directory)
+        public DevelopmentEnvironment(IDirectoryInfo workingDirectory, IDirectoryInfo metadataDirectory)
+            : this(
+                workingDirectory,
+                metadataDirectory,
+                new TokenStore(new TokenProtector(), metadataDirectory.GetFile("TOKEN")))
         {
-            if (directory is { Length: 0 })
-            {
-                directory = ".";
-            }
-            var workingDir = new DirectoryInfo(directory);
-            var metadataDir = new DirectoryInfo(Path.Combine(workingDir.FullName, ".abbot"));
-            var environment = new DevelopmentEnvironment(workingDir, metadataDir);
-            return environment;
         }
 
-        DevelopmentEnvironment(DirectoryInfo workingDirectory, DirectoryInfo metadataDirectory)
+        public DevelopmentEnvironment(
+            IDirectoryInfo workingDirectory,
+            IDirectoryInfo metadataDirectory,
+            TokenStore tokenStore)
         {
             WorkingDirectory = workingDirectory;
             _metadataDirectory = metadataDirectory;
-            var tokenFile = new FileInfo(Path.Combine(_metadataDirectory.FullName, "TOKEN"));
-            _tokenStore = new TokenStore(new TokenProtector(), tokenFile);
+            _tokenStore = tokenStore;
         }
+
+        public async Task EnsureAsync()
+        {
+            WorkingDirectory.Create();
+            _metadataDirectory.Create();
+            _metadataDirectory.Hide();
+            
+            await EnsureGitIgnoreAsync();
+            await EnsureReferencesFileAsync();
+            await EnsureOmniSharpConfigAsync();
+        }
+
+        public bool Exists => WorkingDirectory.Exists;
 
         /// <summary>
         /// Get a skill environment for the specified skill.
@@ -62,14 +55,15 @@ namespace Serious.Abbot.CommandLine.Services
         /// <param name="skill">The name of the skill.</param>
         public SkillEnvironment GetSkillEnvironment(string skill)
         {
-            return new SkillEnvironment(this, skill);
+            var skillDirectory = WorkingDirectory.GetSubdirectory(skill);
+            return new SkillEnvironment(skill, skillDirectory);
         }
 
         public bool IsInitialized => _metadataDirectory.Exists;
         
         public bool IsAuthenticated => !_tokenStore.Empty;
 
-        public DirectoryInfo WorkingDirectory { get; }
+        public IDirectoryInfo WorkingDirectory { get; }
 
         /// <summary>
         /// The stored API Key token.
@@ -90,23 +84,23 @@ namespace Serious.Abbot.CommandLine.Services
 
         async Task EnsureGitIgnoreAsync()
         {
-            var gitignore = new FileInfo(Path.Combine(_metadataDirectory.FullName, ".gitignore"));
+            var gitignore = _metadataDirectory.GetFile(".gitignore");
             if (gitignore.Exists)
             {
                 return;
             }
 
-            await FileHelpers.WriteAllTextAsync(gitignore.FullName, "*");
+            await gitignore.WriteAllTextAsync("*");
         }
         
         Task EnsureReferencesFileAsync()
         {
-            return Omnisharp.WriteRspFileAsync(_metadataDirectory.FullName);
+            return Omnisharp.WriteRspFileAsync(_metadataDirectory);
         }
         
         Task EnsureOmniSharpConfigAsync()
         {
-            return Omnisharp.WriteConfigFileAsync(WorkingDirectory.FullName, ".abbot/references.rsp");
+            return Omnisharp.WriteConfigFileAsync(WorkingDirectory, ".abbot/references.rsp");
         }
     }
 }

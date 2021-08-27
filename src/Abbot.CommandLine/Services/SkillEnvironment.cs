@@ -1,10 +1,10 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Serious.Abbot.CommandLine.Editors;
+using Serious.Abbot.CommandLine.IO;
 using Serious.Abbot.Entities;
 using Serious.Abbot.Messages;
 
@@ -13,21 +13,21 @@ namespace Serious.Abbot.CommandLine.Services
     public class SkillEnvironment
     {
         readonly string _skill;
-        readonly string _skillDirectory;
-        readonly string _skillMetaDirectory;
-        readonly string _concurrencyFilePath;
+        readonly IDirectoryInfo _skillDirectory;
+        readonly IDirectoryInfo _skillMetaDirectory;
+        readonly IFileInfo _concurrencyFile;
 
-        public SkillEnvironment(DevelopmentEnvironment developmentEnvironment, string skill)
+        public SkillEnvironment(string skill, IDirectoryInfo skillDirectory)
         {
             _skill = skill;
-            _skillDirectory = Path.Combine(developmentEnvironment.WorkingDirectory.FullName, skill);
-            _skillMetaDirectory = Path.Combine(_skillDirectory, ".meta");
-            _concurrencyFilePath = Path.Combine(_skillMetaDirectory, ".concurrency");
+            _skillDirectory = skillDirectory;
+            _skillMetaDirectory = _skillDirectory.GetSubdirectory(".meta");
+            _concurrencyFile = _skillMetaDirectory.GetFile(".concurrency");
         }
 
-        public bool Exists => Directory.Exists(_skillDirectory);
+        public bool Exists => _skillDirectory.Exists;
 
-        public string WorkingDirectory => _skillDirectory;
+        public IDirectoryInfo WorkingDirectory => _skillDirectory;
 
         /// <summary>
         /// Reads the concurrency file for the skill.
@@ -35,9 +35,8 @@ namespace Serious.Abbot.CommandLine.Services
         /// <returns></returns>
         public Task<string> ReadConcurrencyFileAsync()
         {
-            var concurrencyFile = new FileInfo(_concurrencyFilePath);
-            return concurrencyFile.Exists
-                ? File.ReadAllTextAsync(_concurrencyFilePath)
+            return _concurrencyFile.Exists
+                ? _concurrencyFile.ReadAllTextAsync()
                 : Task.FromResult(string.Empty);
         }
 
@@ -47,8 +46,8 @@ namespace Serious.Abbot.CommandLine.Services
         /// <param name="codeHash">The hash of the code</param>
         public async Task WriteConcurrencyFileAsync(string codeHash)
         {
-            var file = await FileHelpers.WriteAllTextAsync(_concurrencyFilePath, codeHash);
-            file.HideFile();
+            await _concurrencyFile.WriteAllTextAsync(codeHash);
+            _concurrencyFile.Hide();
         }
 
         public Task WriteOmniSharpConfigFileAsync()
@@ -67,8 +66,8 @@ namespace Serious.Abbot.CommandLine.Services
         /// <returns></returns>
         public async Task CreateAsync(SkillGetResponse skillInfo)
         {
-            Directory.CreateDirectory(_skillDirectory); // noop if directory already exists.
-            Directory.CreateDirectory(_skillMetaDirectory); // noop if directory already exists.
+            _skillDirectory.Create(); // noop if directory already exists.
+            _skillMetaDirectory.Create(); // noop if directory already exists.
 
             await WriteConcurrencyFileAsync(skillInfo.CodeHash);
             await WriteCodeAsync(skillInfo.Code, skillInfo.Language);
@@ -81,11 +80,11 @@ namespace Serious.Abbot.CommandLine.Services
 
         public Task WriteCodeAsync(string code, CodeLanguage language)
         {
-            var codeFilePath = GetCodeFilePath(language);
+            var codeFile = GetCodeFile(language);
             var contents = language is CodeLanguage.CSharp
                 ? Omnisharp.EnsureGlobalsDirective(code)
                 : code;
-            return FileHelpers.WriteAllTextAsync(codeFilePath, contents);
+            return codeFile.WriteAllTextAsync(contents);
         }
         
         /// <summary>
@@ -94,13 +93,13 @@ namespace Serious.Abbot.CommandLine.Services
         /// <param name="language">The language for the skill</param>
         public async Task<bool> HasLocalChangesAsync(CodeLanguage language)
         {
-            var codeFilePath = GetCodeFilePath(language);
-            if (!File.Exists(codeFilePath))
+            var codeFile = GetCodeFile(language);
+            if (!codeFile.Exists)
             {
                 return false;
             }
             
-            var existingCode = await File.ReadAllTextAsync(codeFilePath);
+            var existingCode = await codeFile.ReadAllTextAsync();
             existingCode = Omnisharp.RemoveGlobalsDirective(existingCode);
 
             var existingCodeHash = await ReadConcurrencyFileAsync();
@@ -112,16 +111,17 @@ namespace Serious.Abbot.CommandLine.Services
         /// <summary>
         /// Retrieve the path to the code file when we don't know the language.
         /// </summary>
-        public string? GetCodeFilePath()
+        public IFileInfo? GetCodeFile()
         {
-            var directory = new DirectoryInfo(WorkingDirectory);
-            return directory.GetFiles($"{_skill}.*")?.SingleOrDefault()?.FullName;
+           return  Enum.GetValues<CodeLanguage>()
+                .Select(GetCodeFile)
+                .SingleOrDefault(f => f.Exists);
         }
 
-        string GetCodeFilePath(CodeLanguage language)
+        IFileInfo GetCodeFile(CodeLanguage language)
         {
             var extension = language.GetFileExtension();
-            return Path.Combine(_skillDirectory, $"{_skill}.{extension}");
+            return _skillDirectory.GetFile($"{_skill}.{extension}");
         }
 
         static string ComputeSHA1Hash(string value)
