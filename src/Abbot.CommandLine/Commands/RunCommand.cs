@@ -43,7 +43,7 @@ namespace Serious.Abbot.CommandLine.Commands
                 return 1;
             }
 
-            var codeFile = skillEnvironment.GetCodeFile();
+            var codeFile = await skillEnvironment.GetCodeFile();
             if (codeFile is null)
             {
                 Console.WriteLine($"Did not find a code file in {skillEnvironment.WorkingDirectory}");

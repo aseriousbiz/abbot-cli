@@ -16,6 +16,8 @@ namespace Serious.Abbot.CommandLine.Services
         readonly IDirectoryInfo _skillDirectory;
         readonly IDirectoryInfo _skillMetaDirectory;
         readonly IFileInfo _concurrencyFile;
+        readonly IFileInfo _languageFile;
+        CodeLanguage? _language;
 
         public SkillEnvironment(string skill, IDirectoryInfo skillDirectory)
         {
@@ -23,6 +25,7 @@ namespace Serious.Abbot.CommandLine.Services
             _skillDirectory = skillDirectory;
             _skillMetaDirectory = _skillDirectory.GetSubdirectory(".meta");
             _concurrencyFile = _skillMetaDirectory.GetFile(".concurrency");
+            _languageFile = _skillMetaDirectory.GetFile(".language");
         }
 
         public bool Exists => _skillDirectory.Exists;
@@ -32,7 +35,6 @@ namespace Serious.Abbot.CommandLine.Services
         /// <summary>
         /// Reads the concurrency file for the skill.
         /// </summary>
-        /// <returns></returns>
         public Task<string> ReadConcurrencyFileAsync()
         {
             return _concurrencyFile.Exists
@@ -50,16 +52,6 @@ namespace Serious.Abbot.CommandLine.Services
             _concurrencyFile.Hide();
         }
 
-        public Task WriteOmniSharpConfigFileAsync()
-        {
-            return Omnisharp.WriteConfigFileAsync(_skillDirectory, "../.abbot/references.rsp");
-        }
-        
-        public Task WriteGlobalsCsxFileAsync()
-        {
-            return Omnisharp.WriteGlobalsCsxFileAsync(_skillMetaDirectory);
-        }
-
         /// <summary>
         /// Creates a <see cref="SkillEnvironment"/> based on the <see cref="SkillGetResponse" />
         /// </summary>
@@ -71,11 +63,29 @@ namespace Serious.Abbot.CommandLine.Services
 
             await WriteConcurrencyFileAsync(skillInfo.CodeHash);
             await WriteCodeAsync(skillInfo.Code, skillInfo.Language);
-            
+            await WriteLanguageAsync(skillInfo.Language);
             if (skillInfo.Language is CodeLanguage.CSharp)
             {
-                await WriteGlobalsCsxFileAsync();
+                await Omnisharp.WriteGlobalsCsxFileAsync(_skillMetaDirectory);
             }
+        }
+
+        async Task<CodeLanguage?> ReadLanguageAsync()
+        {
+            if (!_languageFile.Exists)
+            {
+                return null;
+            }
+
+            var language = await _languageFile.ReadAllTextAsync();
+            return Enum.TryParse<CodeLanguage>(language, out var codeLanguage)
+                ? codeLanguage
+                : null;
+        }
+
+        Task WriteLanguageAsync(CodeLanguage language)
+        {
+            return _languageFile.WriteAllTextAsync(language.ToString());
         }
 
         public Task WriteCodeAsync(string code, CodeLanguage language)
@@ -108,10 +118,18 @@ namespace Serious.Abbot.CommandLine.Services
             return existingCodeHash != codeHash;
         }
 
+        public async Task<IFileInfo?> GetCodeFile()
+        {
+            var language = _language ??= await ReadLanguageAsync();
+            return language.HasValue
+                ? GetCodeFile(language.Value)
+                : GetCodeFileBackup();
+        }
+
         /// <summary>
         /// Retrieve the path to the code file when we don't know the language.
         /// </summary>
-        public IFileInfo? GetCodeFile()
+        IFileInfo? GetCodeFileBackup()
         {
            return  Enum.GetValues<CodeLanguage>()
                 .Select(GetCodeFile)
