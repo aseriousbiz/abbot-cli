@@ -1,4 +1,4 @@
-name: Build and deploy Abbot to Azure - abbot
+name: Build Abbot CLI
 
 on:
   push:
