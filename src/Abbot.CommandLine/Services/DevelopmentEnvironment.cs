@@ -4,6 +4,10 @@ using Serious.Abbot.CommandLine.Editors;
 
 namespace Serious.Abbot.CommandLine.Services
 {
+    /// <summary>
+    /// Represents an initialized Abbot Skills Folder. This is the root folder where skill development occurs. Each
+    /// sub-folder of an Abbot Skills Folder represents a skill to be edited.
+    /// </summary>
     public class DevelopmentEnvironment
     {
         readonly DirectoryInfo _metadataDirectory;
@@ -50,6 +54,15 @@ namespace Serious.Abbot.CommandLine.Services
             _metadataDirectory = metadataDirectory;
             var tokenFile = new FileInfo(Path.Combine(_metadataDirectory.FullName, "TOKEN"));
             _tokenStore = new TokenStore(new TokenProtector(), tokenFile);
+        }
+
+        /// <summary>
+        /// Get a skill environment for the specified skill.
+        /// </summary>
+        /// <param name="skill">The name of the skill.</param>
+        public SkillEnvironment GetSkillEnvironment(string skill)
+        {
+            return new SkillEnvironment(this, skill);
         }
 
         public bool IsInitialized => _metadataDirectory.Exists;

@@ -2,8 +2,6 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Serious.Abbot.CommandLine.Editors;
 using Serious.Abbot.CommandLine.Services;
@@ -33,28 +31,23 @@ namespace Serious.Abbot.CommandLine.Commands
                 Console.WriteLine($"The {directoryType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
                 return 1;
             }
+
+            var skillEnvironment = environment.GetSkillEnvironment(skill);
             
-            var skillDirectory = new DirectoryInfo(Path.Combine(environment.WorkingDirectory.FullName, skill));
-            if (!skillDirectory.Exists)
+            if (!skillEnvironment.Exists)
             {
-                Console.WriteLine($"The directory {skillDirectory.FullName} does not exist. Have you run `abbot download {skill}` yet?");
+                Console.WriteLine($"The directory {skillEnvironment.WorkingDirectory} does not exist. Have you run `abbot download {skill}` yet?");
                 return 1;
             }
 
-            var codeFiles = skillDirectory.GetFiles($"{skill}.*");
-            if (codeFiles is { Length: 0 })
+            var codeFile = skillEnvironment.GetCodeFilePath();
+            if (codeFile is null)
             {
-                Console.WriteLine($"Did not find a code file in {skillDirectory.FullName}");
-                return 1;
-            }
-
-            if (codeFiles is { Length: > 1 })
-            {
-                Console.WriteLine($"Found more than one code file in {skillDirectory.FullName}");
+                Console.WriteLine($"Did not find a code file in {skillEnvironment.WorkingDirectory}");
                 return 1;
             }
             
-            var code = await File.ReadAllTextAsync(codeFiles[0].FullName);
+            var code = await File.ReadAllTextAsync(codeFile);
             code = Omnisharp.RemoveGlobalsDirective(code);
             
             var runRequest = new SkillRunRequest
