@@ -24,7 +24,9 @@ namespace Serious.Abbot.CommandLine
 #pragma warning disable CA2000
             var httpClient = RestService.CreateHttpClient(ApiHost, settings);
 #pragma warning restore CA2000
-            httpClient.DefaultRequestHeaders.Add("X-Client-Version", StatusCommand.GetVersion());
+            var version = StatusCommand.GetVersion();
+            httpClient.DefaultRequestHeaders.Add("X-Client-Version", version);
+            httpClient.DefaultRequestHeaders.Add("User-Agent", $"abbot-cli ({version})");
             return RestService.For<IAbbotApi>(httpClient);
         }
 
