@@ -24,17 +24,17 @@
         </value>
     </data>
     <data name="Initialized_Abbot_Directory" xml:space="preserve">
-        <value>Initialized an Abbot Skill Development Environment in {0}</value>
+        <value>Initialized an Abbot Skills Folder in {0}</value>
     </data>
     <data name="Directory_Does_Not_Exist" xml:space="preserve">
         <value>The directory {0} does not exist.</value>
     </data>
     <data name="Directory_Is_Not_Abbot_Development_Enviroment" xml:space="preserve">
-        <value>The directory {0} is not an Abbot Skill development environment.
-Run `abbot init {1}` to initialize the directory.</value>
+        <value>The directory {0} is not an Abbot Skills folder.
+Run `abbot auth{1}` to set up the directory as an Abbot Skills folder and authenticate it with your Abbot account.</value>
     </data>
     <data name="Abbot_Directory_Not_Authenticated" xml:space="preserve">
-        <value>The directory {0} is an unauthenticated Abbot Skill development environment.
+        <value>The directory {0} is an unauthenticated Abbot Skills folder.
 Run `abbot auth {1}` to authenticate this directory to your Abbot account.</value>
     </data>
 </root>

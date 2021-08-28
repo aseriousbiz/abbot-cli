@@ -39,7 +39,10 @@ namespace Serious.Abbot.CommandLine.Commands
 
             if (!environment.IsInitialized)
             {
-                Console.WriteLine(Messages.Directory_Is_Not_Abbot_Development_Enviroment, workingDir, directory);
+                var initDirectory = !environment.DirectorySpecified
+                    ? ""
+                    : $" --directory {directory}";
+                Console.WriteLine(Messages.Directory_Is_Not_Abbot_Development_Enviroment, workingDir, initDirectory);
                 return 0;
             }
 
