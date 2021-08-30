@@ -11,7 +11,10 @@ using Serious.Abbot.Messages;
 
 namespace Serious.Abbot.CommandLine.Services
 {
-    public class SkillEnvironment
+    /// <summary>
+    /// A workspace for an Abbot skill. This is a directory within an Abbot <see cref="Workspace" /> 
+    /// </summary>
+    public class SkillWorkspace
     {
         readonly IDirectoryInfo _skillDirectory;
         readonly IDirectoryInfo _skillMetaDirectory;
@@ -19,7 +22,7 @@ namespace Serious.Abbot.CommandLine.Services
         readonly IFileInfo _languageFile;
         CodeLanguage? _language;
 
-        public SkillEnvironment(IDirectoryInfo skillDirectory)
+        public SkillWorkspace(IDirectoryInfo skillDirectory)
         {
             _skillDirectory = skillDirectory;
             _skillMetaDirectory = _skillDirectory.GetSubdirectory(".meta");
@@ -56,7 +59,7 @@ namespace Serious.Abbot.CommandLine.Services
         }
 
         /// <summary>
-        /// Creates a <see cref="SkillEnvironment"/> based on the <see cref="SkillGetResponse" />
+        /// Creates a <see cref="SkillWorkspace"/> based on the <see cref="SkillGetResponse" />
         /// </summary>
         /// <returns></returns>
         public async Task CreateAsync(SkillGetResponse skillInfo)
@@ -125,13 +128,13 @@ namespace Serious.Abbot.CommandLine.Services
         /// <summary>
         /// Used to retrieve the code for the skill. This is used when running or deploying the code.
         /// </summary>
-        /// <param name="environment">The Abbot Skills development environment.</param>
-        public async Task<CodeResult> GetCodeAsync(DevelopmentEnvironment environment)
+        /// <param name="workspace">The Abbot Workspace.</param>
+        public async Task<CodeResult> GetCodeAsync(Workspace workspace)
         {
-            if (!environment.IsInitialized)
+            if (!workspace.IsInitialized)
             {
-                var directoryType = environment.DirectorySpecified ? "specified" : "current";
-                return CodeResult.Fail($"The {directoryType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`");
+                var directoryType = workspace.DirectorySpecified ? "specified" : "current";
+                return CodeResult.Fail($"The {directoryType} directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`");
             }
             
             if (!Exists)

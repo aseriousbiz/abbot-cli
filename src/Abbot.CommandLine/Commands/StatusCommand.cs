@@ -8,15 +8,13 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class StatusCommand : Command
     {
-        readonly IDevelopmentEnvironmentFactory _developmentEnvironmentFactory;
+        readonly IWorkspaceFactory _workspaceFactory;
 
-        public StatusCommand(IDevelopmentEnvironmentFactory developmentEnvironmentFactory)
-            : base("status", "Get the status of the Abbot development directory.")
+        public StatusCommand(IWorkspaceFactory workspaceFactory)
+            : base("status", "Get the status of the Abbot Workspace.")
         {
-            _developmentEnvironmentFactory = developmentEnvironmentFactory;
-            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
-            directoryOption.AddAlias("-d");
-            AddOption(directoryOption);
+            _workspaceFactory = workspaceFactory;
+            this.AddDirectoryOption();
             Handler = CommandHandler.Create<string?>(HandleStatusCommandAsync);
         }
 
@@ -28,31 +26,31 @@ namespace Serious.Abbot.CommandLine.Commands
         async Task<int> HandleStatusCommandAsync(string? directory)
         {
             Console.WriteLine($"Running abbot-cli version {GetVersion()}");
-            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
-            var workingDir = environment.WorkingDirectory.FullName;
+            var workspace = _workspaceFactory.GetWorkspace(directory);
+            var workingDir = workspace.WorkingDirectory.FullName;
             
-            if (!environment.WorkingDirectory.Exists)
+            if (!workspace.WorkingDirectory.Exists)
             {
                 Console.WriteLine(Messages.Directory_Does_Not_Exist, workingDir);
                 return 0;
             }
 
-            if (!environment.IsInitialized)
+            if (!workspace.IsInitialized)
             {
-                var initDirectory = !environment.DirectorySpecified
+                var initDirectory = !workspace.DirectorySpecified
                     ? ""
                     : $" --directory {directory}";
                 Console.WriteLine(Messages.Directory_Is_Not_Abbot_Development_Enviroment, workingDir, initDirectory);
                 return 0;
             }
 
-            if (!environment.IsAuthenticated)
+            if (!workspace.IsAuthenticated)
             {
                 Console.WriteLine(Messages.Abbot_Directory_Not_Authenticated, workingDir, directory);
                 return 0;
             }
 
-            var response = await AbbotApi.CreateInstance(environment).GetStatusAsync();
+            var response = await AbbotApi.CreateInstance(workspace).GetStatusAsync();
             if (!response.IsSuccessStatusCode)
             {
                 if (!response.IsSuccessStatusCode)
@@ -70,7 +68,7 @@ namespace Serious.Abbot.CommandLine.Commands
             var organization = response.Content.Organization;
             var user = response.Content.User;
             
-            var status = @$"The directory {workingDir} is an authenticated Abbot Skills folder.
+            var status = @$"The directory {workingDir} is an authenticated Workspace.
 Organization: {organization.Name} ({organization.Platform} {organization.PlatformId})
 User: {user.Name} ({user.PlatformUserId})";
             Console.WriteLine(status);

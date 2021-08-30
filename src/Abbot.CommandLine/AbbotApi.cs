@@ -15,11 +15,11 @@ namespace Serious.Abbot.CommandLine
         const string ApiHost = "https://api.ab.bot/";
 #endif
 
-        public static IAbbotApi CreateInstance(DevelopmentEnvironment environment)
+        public static IAbbotApi CreateInstance(Workspace workspace)
         {
             var settings = new RefitSettings
             {
-                AuthorizationHeaderValueGetter = async () => await environment.GetTokenAsync() ?? string.Empty,
+                AuthorizationHeaderValueGetter = async () => await workspace.GetTokenAsync() ?? string.Empty,
             };
 #pragma warning disable CA2000
             var httpClient = RestService.CreateHttpClient(ApiHost, settings);

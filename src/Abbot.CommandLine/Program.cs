@@ -23,7 +23,7 @@ namespace Serious.Abbot.CommandLine
         /// <returns>0 on success, an exit code on failure.</returns>
         static int Main(string[] args)
         {
-            var factory = new DevelopmentEnvironmentFactory();
+            var factory = new WorkspaceFactory();
             var runCommand = new RunCommand(factory);
             // Create a root command with some options
             var rootCommand = new RootCommand
@@ -37,7 +37,7 @@ namespace Serious.Abbot.CommandLine
                 new StatusCommand(factory)
             };
 
-            rootCommand.Description = "Abbot command line. Use this to set up a local Abbot editing environment. To get started, run `abbot init .` in a directory where you want to edit skills.";
+            rootCommand.Description = "Abbot command line. Use this to set up a local Abbot Workspace. To get started, run `abbot auth` in a directory where you want to edit skills.";
             
             // Parse the incoming args and invoke the handler
             return rootCommand.InvokeAsync(args).Result;
