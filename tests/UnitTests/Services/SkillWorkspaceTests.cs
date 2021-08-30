@@ -5,18 +5,18 @@ using Serious.Abbot.Messages;
 using UnitTests.Fakes;
 using Xunit;
 
-public class SkillEnvironmentTests
+public class SkillWorkspaceTests
 {
     public class TheConstructor
     {
         [Fact]
-        public void CreatesEnvironmentInstanceButNothingOnDisk()
+        public void CreatesSkillWorkspaceInstanceButNothingOnDisk()
         {
             var skillDirectory = new FakeDirectoryInfo("./skills/my-skill");
             
-            var environment = new SkillEnvironment(skillDirectory);
+            var workspace = new SkillWorkspace(skillDirectory);
             
-            Assert.False(environment.Exists);
+            Assert.False(workspace.Exists);
             Assert.False(skillDirectory.Exists);
         }
     }
@@ -27,16 +27,16 @@ public class SkillEnvironmentTests
         public async Task CreatesSkillDirectoryAndFiles()
         {
             var skillDirectory = new FakeDirectoryInfo("./skills/my-skill");
-            var environment = new SkillEnvironment(skillDirectory);
+            var workspace = new SkillWorkspace(skillDirectory);
             var response = new SkillGetResponse
             {
                 CodeHash = "abc123",
                 Language = CodeLanguage.Python
             };
 
-            await environment.CreateAsync(response);
+            await workspace.CreateAsync(response);
             
-            Assert.True(environment.Exists);
+            Assert.True(workspace.Exists);
             Assert.True(skillDirectory.Exists);
             var skillMetaDirectory = skillDirectory.GetSubdirectory(".meta");
             Assert.True(skillMetaDirectory.Exists);
@@ -48,14 +48,14 @@ public class SkillEnvironmentTests
         public async Task WritesConcurrencyFileToDisk()
         {
             var skillDirectory = new FakeDirectoryInfo("./skills/my-skill");
-            var environment = new SkillEnvironment(skillDirectory);
+            var workspace = new SkillWorkspace(skillDirectory);
             var response = new SkillGetResponse
             {
                 CodeHash = "abc123",
                 Language = CodeLanguage.Python
             };
 
-            await environment.CreateAsync(response);
+            await workspace.CreateAsync(response);
             
             var concurrencyFile = skillDirectory.GetSubdirectory(".meta").GetFile(".concurrency");
             Assert.True(concurrencyFile.Exists);
@@ -69,7 +69,7 @@ public class SkillEnvironmentTests
         public async Task WritesCodeFileToDisk(CodeLanguage language, string ext)
         {
             var skillDirectory = new FakeDirectoryInfo("./skills/my-skill");
-            var environment = new SkillEnvironment(skillDirectory);
+            var workspace = new SkillWorkspace(skillDirectory);
             var response = new SkillGetResponse
             {
                 CodeHash = "abc123",
@@ -77,7 +77,7 @@ public class SkillEnvironmentTests
                 Code = "// This is the code"
             };
 
-            await environment.CreateAsync(response);
+            await workspace.CreateAsync(response);
             
             var codeFile = skillDirectory.GetFile($"main.{ext}");
             Assert.True(codeFile.Exists);
@@ -89,7 +89,7 @@ public class SkillEnvironmentTests
         public async Task WritesCSharpCodeFileToDiskWithDirective()
         {
             var skillDirectory = new FakeDirectoryInfo("./skills/my-skill");
-            var environment = new SkillEnvironment(skillDirectory);
+            var workspace = new SkillWorkspace(skillDirectory);
             var response = new SkillGetResponse
             {
                 CodeHash = "abc123",
@@ -97,7 +97,7 @@ public class SkillEnvironmentTests
                 Code = "// This is the code"
             };
 
-            await environment.CreateAsync(response);
+            await workspace.CreateAsync(response);
             
             var codeFile = skillDirectory.GetFile("main.csx");
             Assert.True(codeFile.Exists);
@@ -115,18 +115,18 @@ public class SkillEnvironmentTests
         public async Task RetrievesTheLocalCodeForEachLanguage(CodeLanguage language)
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory, true);
-            await environment.EnsureAsync();
-            var skillEnvironment = new SkillEnvironment(directory.GetSubdirectory("my-skill"));
+            var workspace = new Workspace(directory, true);
+            await workspace.EnsureAsync();
+            var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
             var response = new SkillGetResponse
             {
                 CodeHash = "abc123",
                 Language = language,
                 Code = "# This is the code"
             };
-            await skillEnvironment.CreateAsync(response);
+            await skillWorkspace.CreateAsync(response);
 
-            var codeResult = await skillEnvironment.GetCodeAsync(environment);
+            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
             
             Assert.True(codeResult.IsSuccess);
             Assert.Equal("# This is the code", codeResult.Code);
@@ -139,18 +139,18 @@ public class SkillEnvironmentTests
         public async Task StripsLoadDirective(CodeLanguage language)
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory, true);
-            await environment.EnsureAsync();
-            var skillEnvironment = new SkillEnvironment(directory.GetSubdirectory("my-skill"));
+            var workspace = new Workspace(directory, true);
+            await workspace.EnsureAsync();
+            var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
             var response = new SkillGetResponse
             {
                 CodeHash = "abc123",
                 Language = language,
                 Code = "#load \".meta/globals.csx\" // This is required for Intellisense in VS Code, etc. DO NOT TOUCH THIS LINE!\n# This is the code"
             };
-            await skillEnvironment.CreateAsync(response);
+            await skillWorkspace.CreateAsync(response);
 
-            var codeResult = await skillEnvironment.GetCodeAsync(environment);
+            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
             
             Assert.True(codeResult.IsSuccess);
             Assert.Equal("# This is the code", codeResult.Code);
@@ -159,28 +159,28 @@ public class SkillEnvironmentTests
         [Theory]
         [InlineData(true, "specified")]
         [InlineData(false, "current")]
-        public async Task ReportsErrorWhenEnvironmentDoesNotExist(bool directorySpecified, string expectedType)
+        public async Task ReportsErrorWhenWorkspaceDirectoryDoesNotExist(bool directorySpecified, string expectedType)
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory, directorySpecified);
-            var skillEnvironment = new SkillEnvironment(directory.GetSubdirectory("my-skill"));
+            var workspace = new Workspace(directory, directorySpecified);
+            var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
             
-            var codeResult = await skillEnvironment.GetCodeAsync(environment);
+            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
             
             Assert.False(codeResult.IsSuccess);
             Assert.Null(codeResult.Code);
-            Assert.Equal($"The {expectedType} directory is not an Abbot Skills folder. Either specify the directory where you've initialized an environment, or initialize a new one using `abbot init`", codeResult.ErrorMessage);
+            Assert.Equal($"The {expectedType} directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`", codeResult.ErrorMessage);
         }
         
         [Fact]
         public async Task ReportsErrorWhenSkillDirectoryDoesNotExist()
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory, true);
-            await environment.EnsureAsync();
-            var skillEnvironment = new SkillEnvironment(directory.GetSubdirectory("my-skill"));
+            var workspace = new Workspace(directory, true);
+            await workspace.EnsureAsync();
+            var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
             
-            var codeResult = await skillEnvironment.GetCodeAsync(environment);
+            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
             
             Assert.False(codeResult.IsSuccess);
             Assert.Null(codeResult.Code);
@@ -191,13 +191,13 @@ public class SkillEnvironmentTests
         public async Task ReportsErrorWhenCodeDoesNotExist()
         {
             var directory = new FakeDirectoryInfo("./skills");
-            var environment = new DevelopmentEnvironment(directory, true);
-            await environment.EnsureAsync();
+            var workspace = new Workspace(directory, true);
+            await workspace.EnsureAsync();
             var skillDirectory = directory.GetSubdirectory("my-skill");
-            var skillEnvironment = new SkillEnvironment(skillDirectory);
+            var skillWorkspace = new SkillWorkspace(skillDirectory);
             skillDirectory.Create();
             
-            var codeResult = await skillEnvironment.GetCodeAsync(environment);
+            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
             
             Assert.False(codeResult.IsSuccess);
             Assert.Null(codeResult.Code);

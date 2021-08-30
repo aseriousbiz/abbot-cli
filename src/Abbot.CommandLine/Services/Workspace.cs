@@ -5,25 +5,25 @@ using Serious.Abbot.CommandLine.IO;
 namespace Serious.Abbot.CommandLine.Services
 {
     /// <summary>
-    /// Represents an initialized Abbot Skills Folder. This is the root folder where skill development occurs. Each
-    /// sub-folder of an Abbot Skills Folder represents a skill to be edited.
+    /// Represents an initialized Abbot Workspace. This is the root folder where skill development occurs. Each
+    /// sub-folder of an Abbot Workspace represents a skill to be edited.
     /// </summary>
-    public class DevelopmentEnvironment
+    public class Workspace
     {
         readonly IDirectoryInfo _metadataDirectory;
         readonly TokenStore _tokenStore;
 
         /// <summary>
-        /// Constructs an instance of a Development Environment.
+        /// Constructs an instance of an Abbot Workspace.
         /// </summary>
         /// <param name="workingDirectory">The working directory.</param>
         /// <param name="directorySpecified">Whether the working directory was specified or is the current directory.</param>
-        public DevelopmentEnvironment(IDirectoryInfo workingDirectory, bool directorySpecified)
+        public Workspace(IDirectoryInfo workingDirectory, bool directorySpecified)
             : this(workingDirectory, workingDirectory.GetSubdirectory(".abbot"), directorySpecified)
         {
         }
 
-        DevelopmentEnvironment(IDirectoryInfo workingDirectory, IDirectoryInfo metadataDirectory, bool directorySpecified)
+        Workspace(IDirectoryInfo workingDirectory, IDirectoryInfo metadataDirectory, bool directorySpecified)
             : this(
                 workingDirectory,
                 metadataDirectory,
@@ -32,7 +32,7 @@ namespace Serious.Abbot.CommandLine.Services
         {
         }
 
-        DevelopmentEnvironment(
+        Workspace(
             IDirectoryInfo workingDirectory,
             IDirectoryInfo metadataDirectory,
             TokenStore tokenStore,
@@ -60,13 +60,13 @@ namespace Serious.Abbot.CommandLine.Services
         public bool DirectorySpecified { get; }
         
         /// <summary>
-        /// Get a skill environment for the specified skill.
+        /// Get a <see cref="GetSkillWorkspace"/> for the specified skill.
         /// </summary>
         /// <param name="skill">The name of the skill.</param>
-        public SkillEnvironment GetSkillEnvironment(string skill)
+        public SkillWorkspace GetSkillWorkspace(string skill)
         {
             var skillDirectory = WorkingDirectory.GetSubdirectory(skill);
-            return new SkillEnvironment(skillDirectory);
+            return new SkillWorkspace(skillDirectory);
         }
 
         public bool IsInitialized => _metadataDirectory.Exists;

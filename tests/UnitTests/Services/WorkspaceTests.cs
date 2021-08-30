@@ -3,29 +3,29 @@ using Serious.Abbot.CommandLine.Services;
 using UnitTests.Fakes;
 using Xunit;
 
-public class DevelopmentEnvironmentTests
+public class WorkspaceTests
 {
     public class TheConstructor
     {
         [Fact]
-        public void CreatesEnvironmentInstanceButNothingOnDisk()
+        public void CreatesWorkspaceInstanceButNothingOnDisk()
         {
-            var environment = new DevelopmentEnvironment(new FakeDirectoryInfo("."), true);
+            var workspace = new Workspace(new FakeDirectoryInfo("."), true);
             
-            Assert.False(environment.Exists);
-            Assert.True(environment.DirectorySpecified);
+            Assert.False(workspace.Exists);
+            Assert.True(workspace.DirectorySpecified);
         }
     }
 
     public class TheEnsureAsyncMethod
     {
         [Fact]
-        public async Task CreatesFoldersAndFilesForAbbotSkillDevelopment()
+        public async Task CreatesFoldersAndFilesForWorkspace()
         {
             var workingDirectory = new FakeDirectoryInfo(".");
-            var environment = new DevelopmentEnvironment(workingDirectory, true);
+            var workspace = new Workspace(workingDirectory, true);
 
-            await environment.EnsureAsync();
+            await workspace.EnsureAsync();
             
             Assert.True(workingDirectory.Exists);
             var omnisharpConfig = workingDirectory.GetFile("omnisharp.json");

@@ -2,9 +2,9 @@ using Serious.Abbot.CommandLine.Services;
 using UnitTests.Fakes;
 using Xunit;
 
-public class DevelopmentEnvironmentFactoryTests
+public class WorkspaceFactoryTests
 {
-    public class TheGetDevelopmentEnvironmentMethod
+    public class TheGetWorkspaceMethod
     {
         [Theory]
         [InlineData("", false)]
@@ -12,11 +12,11 @@ public class DevelopmentEnvironmentFactoryTests
         [InlineData(".", true)]
         public void SetsDirectorySpecifiedWhenDirectoryNullOrEmpty(string? directory, bool expected)
         {
-            var factory = new DevelopmentEnvironmentFactory(dir => new FakeDirectoryInfo(dir));
+            var factory = new WorkspaceFactory(dir => new FakeDirectoryInfo(dir));
             
-            var environment = factory.GetDevelopmentEnvironment(directory);
+            var workspace = factory.GetWorkspace(directory);
 
-            Assert.Equal(expected, environment.DirectorySpecified);
+            Assert.Equal(expected, workspace.DirectorySpecified);
         }
     }
 }

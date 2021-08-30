@@ -14,9 +14,7 @@ namespace Serious.Abbot.CommandLine.Commands
         {
             _runCommand = runCommand;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill to run the REPL against"));
-            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
-            directoryOption.AddAlias("-d");
-            AddOption(directoryOption);
+            this.AddDirectoryOption();
             Handler = CommandHandler.Create<string, string?>(HandleReplCommandAsync);
         }
 

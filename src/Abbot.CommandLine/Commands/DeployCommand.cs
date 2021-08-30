@@ -9,25 +9,23 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class DeployCommand : Command
     {
-        readonly IDevelopmentEnvironmentFactory _developmentEnvironmentFactory;
+        readonly IWorkspaceFactory _workspaceFactory;
 
-        public DeployCommand(IDevelopmentEnvironmentFactory developmentEnvironmentFactory)
+        public DeployCommand(IWorkspaceFactory workspaceFactory)
             : base("deploy", $"Deploys local changes to the specified skill to {Program.Website}")
         {
-            _developmentEnvironmentFactory = developmentEnvironmentFactory;
+            _workspaceFactory = workspaceFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
-            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
-            directoryOption.AddAlias("-d");
-            AddOption(directoryOption);
+            this.AddDirectoryOption();
             Handler = CommandHandler.Create<string, string?>(HandleUploadCommandAsync);
         }
         
         async Task<int> HandleUploadCommandAsync(string skill, string? directory)
         {
-            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
-            var skillEnvironment = environment.GetSkillEnvironment(skill);
+            var workspace = _workspaceFactory.GetWorkspace(directory);
+            var skillWorkspace = workspace.GetSkillWorkspace(skill);
 
-            var codeResult = await skillEnvironment.GetCodeAsync(environment);
+            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
             if (!codeResult.IsSuccess)
             {
                 await Console.Error.WriteLineAsync(codeResult.ErrorMessage);
@@ -36,7 +34,7 @@ namespace Serious.Abbot.CommandLine.Commands
             
             var code = codeResult.Code!;
 
-            var previousCodeHash = await skillEnvironment.ReadConcurrencyFileAsync();
+            var previousCodeHash = await skillWorkspace.ReadConcurrencyFileAsync();
 
             var updateRequest = new SkillUpdateRequest
             {
@@ -44,7 +42,7 @@ namespace Serious.Abbot.CommandLine.Commands
                 PreviousCodeHash = previousCodeHash
             };
 
-            var response = await AbbotApi.CreateInstance(environment)
+            var response = await AbbotApi.CreateInstance(workspace)
                 .DeploySkillAsync(skill, updateRequest);
 
             if (!response.IsSuccessStatusCode)
@@ -60,7 +58,7 @@ namespace Serious.Abbot.CommandLine.Commands
                 return 1;
             }
 
-            await skillEnvironment.WriteConcurrencyFileAsync(result.NewCodeHash);
+            await skillWorkspace.WriteConcurrencyFileAsync(result.NewCodeHash);
             Console.WriteLine($"Skill {skill} updated.");
             return 0;
         }

@@ -9,27 +9,25 @@ namespace Serious.Abbot.CommandLine.Commands
 {
     public class RunCommand : Command
     {
-        readonly IDevelopmentEnvironmentFactory _developmentEnvironmentFactory;
+        readonly IWorkspaceFactory _workspaceFactory;
 
-        public RunCommand(IDevelopmentEnvironmentFactory developmentEnvironmentFactory)
+        public RunCommand(IWorkspaceFactory workspaceFactory)
             : base("run", "Runs your skill code in the skill runner")
         {
-            _developmentEnvironmentFactory = developmentEnvironmentFactory;
+            _workspaceFactory = workspaceFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill to run"));
             Add(new Argument<string>("arguments", () => ".", "The arguments to pass to the skill"));
-            var directoryOption = new Option<string?>("--directory", "The Abbot Skills folder. If omitted, assumes the current directory.");
-            directoryOption.AddAlias("-d");
-            AddOption(directoryOption);
+            this.AddDirectoryOption();
 
             Handler = CommandHandler.Create<string, string, string?>(HandleRunCommandAsync);
         }
 
         internal async Task<int> HandleRunCommandAsync(string skill, string arguments, string? directory)
         {
-            var environment = _developmentEnvironmentFactory.GetDevelopmentEnvironment(directory);
-            var skillEnvironment = environment.GetSkillEnvironment(skill);
+            var workspace = _workspaceFactory.GetWorkspace(directory);
+            var skillWorkspace = workspace.GetSkillWorkspace(skill);
 
-            var codeResult = await skillEnvironment.GetCodeAsync(environment);
+            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
             if (!codeResult.IsSuccess)
             {
                 await Console.Error.WriteLineAsync(codeResult.ErrorMessage);
@@ -45,7 +43,7 @@ namespace Serious.Abbot.CommandLine.Commands
                 Name = skill
             };
 
-            var response = await AbbotApi.CreateInstance(environment)
+            var response = await AbbotApi.CreateInstance(workspace)
                 .RunSkillAsync(skill, runRequest);
             
             if (!response.IsSuccessStatusCode)
