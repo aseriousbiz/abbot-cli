@@ -2,6 +2,11 @@ name: Build Abbot CLI
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag'
+        required: false
+        default: ''
   push:
     branches:
       - main
@@ -61,3 +66,25 @@ jobs:
         name: 'osx'
         path: publish/osx
       if: github.event_name != 'pull_request'
+
+    - name: Parse inputs
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      uses: actions-ecosystem/action-regex-match@v2
+      id: parse_input
+      with:
+        text: ${{ github.event.inputs.tag }}
+        regex: '^[\w\.-]+$'
+
+    - name: Create release
+      uses: marvinpinto/action-automatic-releases@latest
+      if: ${{ github.event_name == 'workflow_dispatch' && steps.parse_input.outputs.match != '' }}
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: ${{ steps.parse_input.outputs.match }}
+        prerelease: true
+        draft: true
+        title: Release ${{ steps.parse_input.outputs.match }}
+        files: |
+          publish/win
+          publish/osx
+          publix/linux
