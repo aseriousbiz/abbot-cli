@@ -7,6 +7,10 @@ on:
         description: 'Release tag'
         required: false
         default: ''
+      artifact:
+        description: 'Publish artifacts'
+        required: false
+        default: '0'
   push:
     branches:
       - main
@@ -91,3 +95,27 @@ jobs:
           win.zip
           linux.zip
           osx.zip
+
+    - name: Upload Win
+      uses: actions/upload-artifact@v2
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.artifact == '1' }}
+      with:
+        name: 'win'
+        path: publish/win
+        retention-days: 7
+
+    - name: Upload Mac
+      uses: actions/upload-artifact@v2
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.artifact == '1' }}
+      with:
+        name: 'osx'
+        path: publish/osx
+        retention-days: 7
+
+    - name: Upload Linux
+      uses: actions/upload-artifact@v2
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.artifact == '1' }}
+      with:
+        name: 'linux'
+        path: publish/linux
+        retention-days: 7
