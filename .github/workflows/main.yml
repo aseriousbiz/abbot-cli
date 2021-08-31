@@ -1,6 +1,7 @@
 name: Build Abbot CLI
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -19,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout main branch
+    - name: Checkout branch
       uses: actions/checkout@v2
     
     - name: Setup .NET 5
@@ -35,3 +36,28 @@ jobs:
 
     - name: Run Tests
       run: dotnet test ${{ env.APP_SOLUTION }} --configuration Release --no-build --nologo
+
+    - name: Build for Publishing
+      run: script/build -r
+      if: github.event_name != 'pull_request'
+
+    - name: Upload Win
+      uses: actions/upload-artifact@v2
+      with:
+        name: 'win'
+        path: publish/win
+      if: github.event_name != 'pull_request'
+
+    - name: Upload Linux
+      uses: actions/upload-artifact@v2
+      with:
+        name: 'linux'
+        path: publish/linux
+      if: github.event_name != 'pull_request'
+
+    - name: Upload Mac
+      uses: actions/upload-artifact@v2
+      with:
+        name: 'osx'
+        path: publish/osx
+      if: github.event_name != 'pull_request'

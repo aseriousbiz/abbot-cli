@@ -1,11 +1,13 @@
-#! /bin/sh
+#!/bin/sh -eu
+
+{ set +x; } 2>/dev/null
+SOURCE=$0
+DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+
+OS="Mac"
+if [[ -e "/c/" ]]; then
+	OS="Windows"
+fi
 
 rm -rf ./publish
-
-dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -c Release -r osx.10.12-x64 -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/osx
-dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/win
-dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -c Release -r linux-x64 -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/linux
-
-zip -vr ./publish/osx.zip ./publish/osx/ -x "*.DS_Store"
-zip -vr ./publish/win.zip ./publish/win/ -x "*.DS_Store"
-zip -vr ./publish/linux.zip ./publish/linux/ -x "*.DS_Store"
+script/build -r -p
