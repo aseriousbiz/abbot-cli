@@ -46,27 +46,6 @@ jobs:
       run: script/build -r
       if: github.event_name != 'pull_request'
 
-    - name: Upload Win
-      uses: actions/upload-artifact@v2
-      with:
-        name: 'win'
-        path: publish/win
-      if: github.event_name != 'pull_request'
-
-    - name: Upload Linux
-      uses: actions/upload-artifact@v2
-      with:
-        name: 'linux'
-        path: publish/linux
-      if: github.event_name != 'pull_request'
-
-    - name: Upload Mac
-      uses: actions/upload-artifact@v2
-      with:
-        name: 'osx'
-        path: publish/osx
-      if: github.event_name != 'pull_request'
-
     - name: Parse inputs
       if: ${{ github.event_name == 'workflow_dispatch' }}
       uses: actions-ecosystem/action-regex-match@v2
@@ -77,27 +56,27 @@ jobs:
 
     - name: Archive Windows
       uses: thedoctor0/zip-release@master
-      if: ${{ github.event_name == 'workflow_dispatch' && steps.parse_input.outputs.match != '' }}
+      if: github.event_name != 'pull_request'
       with:
         type: 'zip'
-        filename: 'win.zip'
-        path: publish/win
+        filename: '../../win.zip'
+        directory: publish/win
 
     - name: Archive Linux
       uses: thedoctor0/zip-release@master
-      if: ${{ github.event_name == 'workflow_dispatch' && steps.parse_input.outputs.match != '' }}
+      if: github.event_name != 'pull_request'
       with:
         type: 'zip'
-        filename: 'linux.zip'
-        path: publish/linux
+        filename: '../../linux.zip'
+        directory: publish/linux
 
     - name: Archive Mac
       uses: thedoctor0/zip-release@master
-      if: ${{ github.event_name == 'workflow_dispatch' && steps.parse_input.outputs.match != '' }}
+      if: github.event_name != 'pull_request'
       with:
         type: 'zip'
-        filename: 'osx.zip'
-        path: publish/osx
+        filename: '../../osx.zip'
+        directory: publish/osx
 
     - name: Create release
       uses: marvinpinto/action-automatic-releases@latest
