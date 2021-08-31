@@ -72,8 +72,8 @@ namespace Serious.Abbot.CommandLine.Services
             await WriteLanguageAsync(skillInfo.Language);
             if (skillInfo.Language is CodeLanguage.CSharp)
             {
-                await Omnisharp.WriteGlobalsCsxFileAsync(_skillMetaDirectory);
-                await Omnisharp.WriteConfigFileAsync(_skillDirectory, "../");
+                await OmniSharpHelpers.WriteGlobalsCsxFileAsync(_skillMetaDirectory);
+                await OmniSharpHelpers.WriteConfigFileAsync(_skillDirectory, "../");
             }
         }
 
@@ -99,7 +99,7 @@ namespace Serious.Abbot.CommandLine.Services
         {
             var codeFile = GetCodeFile(language);
             var contents = language is CodeLanguage.CSharp
-                ? Omnisharp.EnsureGlobalsDirective(code)
+                ? OmniSharpHelpers.EnsureGlobalsDirective(code)
                 : code;
             return codeFile.WriteAllTextAsync(contents);
         }
@@ -117,7 +117,7 @@ namespace Serious.Abbot.CommandLine.Services
             }
             
             var existingCode = await codeFile.ReadAllTextAsync();
-            existingCode = Omnisharp.RemoveGlobalsDirective(existingCode);
+            existingCode = OmniSharpHelpers.RemoveGlobalsDirective(existingCode);
 
             var existingCodeHash = await ReadConcurrencyFileAsync();
 
@@ -149,7 +149,7 @@ namespace Serious.Abbot.CommandLine.Services
             }
 
             var code = await codeFile.ReadAllTextAsync();
-            code = Omnisharp.RemoveGlobalsDirective(code);
+            code = OmniSharpHelpers.RemoveGlobalsDirective(code);
             return CodeResult.Success(code);
         }
 

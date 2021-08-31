@@ -8,7 +8,7 @@ namespace Serious.Abbot.CommandLine.Editors
     /// <summary>
     /// Methods for writing files to help Omnisharp out.
     /// </summary>
-    public static class Omnisharp
+    public static class OmniSharpHelpers
     {
         /// <summary>
         /// Writes an Omnisharp config file. This helps editors such as VS Code that use Omnisharp to provide a
@@ -79,7 +79,7 @@ var Bot = new Serious.Abbot.Scripting.Bot();
             return file;
         }
 
-        const string LoadDirective = $"#load \"{GetCommand.SkillMetaFolder}/globals.csx\" // This is required for Intellisense in VS Code, etc. DO NOT TOUCH THIS LINE!\n";
+        const string LoadDirective = $"#load \"{GetCommand.SkillMetaFolder}/globals.csx\" // This is required for Intellisense in VS Code, etc. DO NOT TOUCH THIS LINE!";
 
         /// <summary>
         /// Adds the OmniSharp directive to load the globals.csx file exists at the beginning of the file. If it
@@ -91,7 +91,7 @@ var Bot = new Serious.Abbot.Scripting.Bot();
         {
             return code.StartsWith(LoadDirective, StringComparison.Ordinal)
                 ? code
-                : $"{LoadDirective}{code}";
+                : $"{LoadDirective}\n{code}";
         }
         
         /// <summary>
@@ -102,9 +102,20 @@ var Bot = new Serious.Abbot.Scripting.Bot();
         /// <returns></returns>
         public static string RemoveGlobalsDirective(string code)
         {
-            return !code.StartsWith(LoadDirective, StringComparison.Ordinal)
+            var stripped = !code.StartsWith(LoadDirective, StringComparison.Ordinal)
                 ? code
                 : code[LoadDirective.Length..];
+
+            if (stripped.StartsWith("\r\n", StringComparison.Ordinal))
+            {
+                stripped = stripped[2..];
+            }
+            else if (stripped[0] == '\n')
+            {
+                stripped = stripped[1..];
+            }
+
+            return stripped;
         }
     }
 }

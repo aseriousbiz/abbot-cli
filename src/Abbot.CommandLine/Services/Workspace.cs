@@ -105,12 +105,12 @@ namespace Serious.Abbot.CommandLine.Services
         
         Task EnsureReferencesFileAsync()
         {
-            return Omnisharp.WriteRspFileAsync(_metadataDirectory);
+            return OmniSharpHelpers.WriteRspFileAsync(_metadataDirectory);
         }
         
         Task EnsureOmniSharpConfigAsync()
         {
-            return Omnisharp.WriteConfigFileAsync(WorkingDirectory, string.Empty);
+            return OmniSharpHelpers.WriteConfigFileAsync(WorkingDirectory, string.Empty);
         }
     }
 }
