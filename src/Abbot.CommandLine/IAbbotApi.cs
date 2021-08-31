@@ -19,5 +19,8 @@ namespace Serious.Abbot.CommandLine
 
         [Post("/api/cli/{skill}/run")]
         Task<ApiResponse<SkillRunResponse>> RunSkillAsync(string skill, SkillRunRequest runRequest);
+
+        [Get("/api/cli/list")]
+        Task<ApiResponse<SkillListResponse>> ListSkillsAsync(SkillOrderBy orderBy, OrderDirection direction, bool includeDisable = false);
     }
 }

@@ -32,6 +32,7 @@ namespace Serious.Abbot.CommandLine
                 new GetCommand(factory),
                 new InitCommand(factory),
                 new DeployCommand(factory),
+                new ListCommand(factory),
                 new ReplCommand(runCommand),
                 runCommand,
                 new StatusCommand(factory)

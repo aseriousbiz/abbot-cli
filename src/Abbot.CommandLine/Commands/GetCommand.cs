@@ -22,10 +22,10 @@ namespace Serious.Abbot.CommandLine.Commands
                 "--force",
                 "-f",
                 "If true, overwrites the local skill code if it exists even if it has changes.");
-            Handler = CommandHandler.Create<string, string?, bool>(HandleDownloadCommandAsync);
+            Handler = CommandHandler.Create<string, string?, bool>(HandleGetCommandAsync);
         }
 
-        async Task<int> HandleDownloadCommandAsync(string skill, string? directory, bool force)
+        async Task<int> HandleGetCommandAsync(string skill, string? directory, bool force)
         {
             var workspace = _workspaceFactory.GetWorkspace(directory);
             if (!workspace.IsInitialized)
@@ -41,7 +41,26 @@ namespace Serious.Abbot.CommandLine.Commands
                 return 1;
             }
 
-            var skillWorkspace = workspace.GetSkillWorkspace(skill);
+            var skillWorkspace = await CreateSkillWorkspaceAsync(skillInfo, workspace, force);
+            if (skillWorkspace is null)
+            {
+                return 1;
+            }
+            bool directoryExists = skillWorkspace.Exists;
+
+            var verb = directoryExists ? "Updated" : "Created";
+            
+            Console.WriteLine(@$"{verb} skill directory {skillWorkspace.WorkingDirectory}
+Edit the code in the directory. When you are ready to deploy it, run 
+
+    abbot deploy {skill}
+");
+            return 0;
+        }
+
+        internal static async Task<SkillWorkspace?> CreateSkillWorkspaceAsync(SkillGetResponse skillInfo, Workspace workspace, bool force)
+        {
+            var skillWorkspace = workspace.GetSkillWorkspace(skillInfo.Name);
 
             bool directoryExists = skillWorkspace.Exists;
             
@@ -52,22 +71,14 @@ namespace Serious.Abbot.CommandLine.Commands
                 if (!(key.KeyChar is 'Y' or 'y'))
                 {
                     Console.WriteLine("\nNo local changes were made");
-                    return 1;
+                    return null;
                 }
 
                 Console.WriteLine("\nOverwriting local changes");
             }
 
             await skillWorkspace.CreateAsync(skillInfo);
-
-            var verb = directoryExists ? "Updated" : "Created";
-            
-            Console.WriteLine(@$"{verb} skill directory {skillWorkspace.WorkingDirectory}
-Edit the code in the directory. When you are ready to deploy it, run 
-
-    abbot deploy {skill}
-");
-            return 0;
+            return skillWorkspace;
         }
 
         static async Task<SkillGetResponse?> GetSkillInfoAsync(string skill, Workspace workspace)

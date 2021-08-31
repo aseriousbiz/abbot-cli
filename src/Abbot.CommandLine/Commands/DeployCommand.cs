@@ -54,7 +54,7 @@ namespace Serious.Abbot.CommandLine.Commands
             
             if (result is null)
             {
-                Console.WriteLine($"The skill directory has been corrupted. Please run `abbot download {skill} {directory}` to restore the state.");
+                Console.WriteLine($"The skill directory has been corrupted. Please run `abbot get {skill} -d {directory}` to restore the state.");
                 return 1;
             }
 
