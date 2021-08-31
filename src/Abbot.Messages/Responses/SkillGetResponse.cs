@@ -10,6 +10,11 @@ namespace Serious.Abbot.Messages
     public class SkillGetResponse
     {
         /// <summary>
+        /// The name of the skill.
+        /// </summary>
+        public string Name { get; set; } = string.Empty;
+        
+        /// <summary>
         /// The code for the skill.
         /// </summary>
         public string Code { get; set; } = string.Empty;

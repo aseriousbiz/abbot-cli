@@ -184,7 +184,7 @@ public class SkillWorkspaceTests
             
             Assert.False(codeResult.IsSuccess);
             Assert.Null(codeResult.Code);
-            Assert.Equal("The directory ./skills/my-skill does not exist. Have you run `abbot download my-skill` yet?", codeResult.ErrorMessage);
+            Assert.Equal("The directory ./skills/my-skill does not exist. Have you run `abbot get my-skill` yet?", codeResult.ErrorMessage);
         }
         
         [Fact]

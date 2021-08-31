@@ -139,7 +139,7 @@ namespace Serious.Abbot.CommandLine.Services
             
             if (!Exists)
             {
-                return CodeResult.Fail($"The directory {WorkingDirectory} does not exist. Have you run `abbot download {SkillName}` yet?");
+                return CodeResult.Fail($"The directory {WorkingDirectory} does not exist. Have you run `abbot get {SkillName}` yet?");
             }
 
             var codeFile = await GetCodeFile();
