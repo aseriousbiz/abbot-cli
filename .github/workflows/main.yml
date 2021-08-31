@@ -75,6 +75,30 @@ jobs:
         text: ${{ github.event.inputs.tag }}
         regex: '^[\w\.-]+$'
 
+    - name: Archive Windows
+      uses: thedoctor0/zip-release@master
+      if: ${{ github.event_name == 'workflow_dispatch' && steps.parse_input.outputs.match != '' }}
+      with:
+        type: 'zip'
+        filename: 'win.zip'
+        path: publish/win
+
+    - name: Archive Linux
+      uses: thedoctor0/zip-release@master
+      if: ${{ github.event_name == 'workflow_dispatch' && steps.parse_input.outputs.match != '' }}
+      with:
+        type: 'zip'
+        filename: 'linux.zip'
+        path: publish/linux
+
+    - name: Archive Mac
+      uses: thedoctor0/zip-release@master
+      if: ${{ github.event_name == 'workflow_dispatch' && steps.parse_input.outputs.match != '' }}
+      with:
+        type: 'zip'
+        filename: 'osx.zip'
+        path: publish/osx
+
     - name: Create release
       uses: marvinpinto/action-automatic-releases@latest
       if: ${{ github.event_name == 'workflow_dispatch' && steps.parse_input.outputs.match != '' }}
@@ -85,6 +109,6 @@ jobs:
         draft: true
         title: Release ${{ steps.parse_input.outputs.match }}
         files: |
-          publish/win
-          publish/osx
-          publix/linux
+          win.zip
+          linux.zip
+          osx.zip
