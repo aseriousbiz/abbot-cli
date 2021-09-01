@@ -2,6 +2,8 @@
 
 A CLI (Command Line Interface) for editing Abbot skills in a local directory (Abbot Workspace).
 
+[__Check out the blog post we wrote about this tool!__](https://blog.ab.bot/archive/2021/08/31/abbot-cli/)
+
 ## Installation
 
 At the moment, installation is very manual.
