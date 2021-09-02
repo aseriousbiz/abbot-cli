@@ -1,21 +1,20 @@
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.Threading.Tasks;
+using Serious.Abbot.CommandLine.IO;
 using Serious.Abbot.CommandLine.Services;
 using Serious.Abbot.Messages;
 
 namespace Serious.Abbot.CommandLine.Commands
 {
-    public class GetCommand : Command
+    public class GetCommand : AbbotCommand
     {
-        readonly IWorkspaceFactory _workspaceFactory;
         public const string SkillMetaFolder = ".meta";
         
-        public GetCommand(IWorkspaceFactory workspaceFactory)
-            : base("get", "Downloads the specified skill code into a directory named after the skill.")
+        public GetCommand(ICommandContext commandContext)
+            : base(commandContext, "get", "Downloads the specified skill code into a directory named after the skill.")
         {
-            _workspaceFactory = workspaceFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
             this.AddDirectoryOption();
             this.AddOption<bool>(
@@ -27,11 +26,11 @@ namespace Serious.Abbot.CommandLine.Commands
 
         async Task<int> HandleGetCommandAsync(string skill, string? directory, bool force)
         {
-            var workspace = _workspaceFactory.GetWorkspace(directory);
+            var workspace = GetWorkspace(directory);
             if (!workspace.IsInitialized)
             {
                 var directoryType = workspace.DirectorySpecified ? "specified" : "current";
-                Console.WriteLine($"The {directoryType} directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`");
+                Console.Out.WriteLine($"The {directoryType} directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`");
                 return 1;
             }
             
@@ -41,7 +40,7 @@ namespace Serious.Abbot.CommandLine.Commands
                 return 1;
             }
 
-            var skillWorkspace = await CreateSkillWorkspaceAsync(skillInfo, workspace, force);
+            var skillWorkspace = await CreateSkillWorkspaceAsync(skillInfo, workspace, Console, force);
             if (skillWorkspace is null)
             {
                 return 1;
@@ -50,7 +49,7 @@ namespace Serious.Abbot.CommandLine.Commands
 
             var verb = directoryExists ? "Updated" : "Created";
             
-            Console.WriteLine(@$"{verb} skill directory {skillWorkspace.WorkingDirectory}
+            Console.Out.WriteLine(@$"{verb} skill directory {skillWorkspace.WorkingDirectory}
 Edit the code in the directory. When you are ready to deploy it, run 
 
     abbot deploy {skill}
@@ -58,32 +57,34 @@ Edit the code in the directory. When you are ready to deploy it, run
             return 0;
         }
 
-        internal static async Task<SkillWorkspace?> CreateSkillWorkspaceAsync(SkillGetResponse skillInfo, Workspace workspace, bool force)
+        internal static async Task<SkillWorkspace?> CreateSkillWorkspaceAsync(
+            SkillGetResponse skillInfo,
+            Workspace workspace,
+            IExtendedConsole console,
+            bool force)
         {
             var skillWorkspace = workspace.GetSkillWorkspace(skillInfo.Name);
-
-            bool directoryExists = skillWorkspace.Exists;
             
             if (!force && skillWorkspace.Exists && await skillWorkspace.HasLocalChangesAsync(skillInfo.Language))
             {
-                Console.Write("You have local changes to the code that would be overwritten by getting the latest code.\nOverwrite local changes? Hit Y to overwrite, any other key to cancel: ");
-                var key = Console.ReadKey();
+                console.Out.Write("You have local changes to the code that would be overwritten by getting the latest code.\nOverwrite local changes? Hit Y to overwrite, any other key to cancel: ");
+                var key = console.ReadKey();
                 if (!(key.KeyChar is 'Y' or 'y'))
                 {
-                    Console.WriteLine("\nNo local changes were made");
+                    console.Out.WriteLine("\nNo local changes were made");
                     return null;
                 }
 
-                Console.WriteLine("\nOverwriting local changes");
+                console.Out.WriteLine("\nOverwriting local changes");
             }
 
             await skillWorkspace.CreateAsync(skillInfo);
             return skillWorkspace;
         }
 
-        static async Task<SkillGetResponse?> GetSkillInfoAsync(string skill, Workspace workspace)
+        async Task<SkillGetResponse?> GetSkillInfoAsync(string skill, Workspace workspace)
         {
-            var response = await AbbotApi.CreateInstance(workspace).GetSkillAsync(skill);
+            var response = await CreateApiClient(workspace).GetSkillAsync(skill);
             if (!response.IsSuccessStatusCode)
             {
                 await response.HandleUnsuccessfulResponseAsync();
@@ -92,7 +93,7 @@ Edit the code in the directory. When you are ready to deploy it, run
 
             if (response.Content is null)
             {
-                await Console.Error.WriteLineAsync("Response content is null");
+                Console.Error.WriteLine("Response content is null");
                 return null;
             }
 

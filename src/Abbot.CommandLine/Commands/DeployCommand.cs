@@ -1,20 +1,16 @@
-using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.Services;
 using Serious.Abbot.Messages;
 
 namespace Serious.Abbot.CommandLine.Commands
 {
-    public class DeployCommand : Command
+    public class DeployCommand : AbbotCommand
     {
-        readonly IWorkspaceFactory _workspaceFactory;
-
-        public DeployCommand(IWorkspaceFactory workspaceFactory)
-            : base("deploy", $"Deploys local changes to the specified skill to {Program.Website}")
+        public DeployCommand(ICommandContext commandContext)
+            : base(commandContext, "deploy", $"Deploys local changes to the specified skill to {Program.Website}")
         {
-            _workspaceFactory = workspaceFactory;
             Add(new Argument<string>("skill", () => string.Empty, "The name of the skill"));
             this.AddDirectoryOption();
             Handler = CommandHandler.Create<string, string?>(HandleUploadCommandAsync);
@@ -22,13 +18,18 @@ namespace Serious.Abbot.CommandLine.Commands
         
         async Task<int> HandleUploadCommandAsync(string skill, string? directory)
         {
-            var workspace = _workspaceFactory.GetWorkspace(directory);
+            var workspace = GetWorkspace(directory);
             var skillWorkspace = workspace.GetSkillWorkspace(skill);
 
-            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
+            if (!workspace.IsInitialized)
+            {
+                return HandleUninitializedWorkspace(workspace);
+            }
+            
+            var codeResult = await skillWorkspace.GetCodeAsync();
             if (!codeResult.IsSuccess)
             {
-                await Console.Error.WriteLineAsync(codeResult.ErrorMessage);
+                Console.Error.WriteLine(codeResult.ErrorMessage ?? "Unknown error occurred");
                 return 1;
             }
             
@@ -42,7 +43,7 @@ namespace Serious.Abbot.CommandLine.Commands
                 PreviousCodeHash = previousCodeHash
             };
 
-            var response = await AbbotApi.CreateInstance(workspace)
+            var response = await CreateApiClient(workspace)
                 .DeploySkillAsync(skill, updateRequest);
 
             if (!response.IsSuccessStatusCode)
@@ -54,12 +55,12 @@ namespace Serious.Abbot.CommandLine.Commands
             
             if (result is null)
             {
-                Console.WriteLine($"The skill directory has been corrupted. Please run `abbot get {skill} -d {directory}` to restore the state.");
+                Console.Out.WriteLine($"The skill directory has been corrupted. Please run `abbot get {skill} -d {directory}` to restore the state.");
                 return 1;
             }
 
             await skillWorkspace.WriteConcurrencyFileAsync(result.NewCodeHash);
-            Console.WriteLine($"Skill {skill} updated.");
+            Console.Out.WriteLine($"Skill {skill} updated.");
             return 0;
         }
 

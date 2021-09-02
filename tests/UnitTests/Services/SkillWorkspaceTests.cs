@@ -126,7 +126,7 @@ public class SkillWorkspaceTests
             };
             await skillWorkspace.CreateAsync(response);
 
-            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
+            var codeResult = await skillWorkspace.GetCodeAsync();
             
             Assert.True(codeResult.IsSuccess);
             Assert.Equal("# This is the code", codeResult.Code);
@@ -150,28 +150,12 @@ public class SkillWorkspaceTests
             };
             await skillWorkspace.CreateAsync(response);
 
-            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
+            var codeResult = await skillWorkspace.GetCodeAsync();
             
             Assert.True(codeResult.IsSuccess);
             Assert.Equal("# This is the code", codeResult.Code);
         }
 
-        [Theory]
-        [InlineData(true, "specified")]
-        [InlineData(false, "current")]
-        public async Task ReportsErrorWhenWorkspaceDirectoryDoesNotExist(bool directorySpecified, string expectedType)
-        {
-            var directory = new FakeDirectoryInfo("./skills");
-            var workspace = new Workspace(directory, directorySpecified);
-            var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
-            
-            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
-            
-            Assert.False(codeResult.IsSuccess);
-            Assert.Null(codeResult.Code);
-            Assert.Equal($"The {expectedType} directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`", codeResult.ErrorMessage);
-        }
-        
         [Fact]
         public async Task ReportsErrorWhenSkillDirectoryDoesNotExist()
         {
@@ -180,11 +164,11 @@ public class SkillWorkspaceTests
             await workspace.EnsureAsync();
             var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
             
-            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
+            var codeResult = await skillWorkspace.GetCodeAsync();
             
             Assert.False(codeResult.IsSuccess);
             Assert.Null(codeResult.Code);
-            Assert.Equal("The directory ./skills/my-skill does not exist. Have you run `abbot get my-skill` yet?", codeResult.ErrorMessage);
+            Assert.Equal("The skill directory ./skills/my-skill does not exist. Have you run `abbot get my-skill` yet? Or use the `--deployed` flag to run the deployed version of this skill on the server.", codeResult.ErrorMessage);
         }
         
         [Fact]
@@ -197,7 +181,7 @@ public class SkillWorkspaceTests
             var skillWorkspace = new SkillWorkspace(skillDirectory);
             skillDirectory.Create();
             
-            var codeResult = await skillWorkspace.GetCodeAsync(workspace);
+            var codeResult = await skillWorkspace.GetCodeAsync();
             
             Assert.False(codeResult.IsSuccess);
             Assert.Null(codeResult.Code);

@@ -1,6 +1,5 @@
-using System;
-using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Serious.Abbot.CommandLine.Services;
@@ -8,14 +7,11 @@ using Serious.Abbot.Messages;
 
 namespace Serious.Abbot.CommandLine.Commands
 {
-    public class ListCommand : Command
+    public class ListCommand : AbbotCommand
     {
-        readonly IWorkspaceFactory _workspaceFactory;
-        
-        public ListCommand(IWorkspaceFactory workspaceFactory)
-            : base("list", "List (and optionally download) all the skills in your organization.")
+        public ListCommand(ICommandContext commandContext)
+            : base(commandContext, "list", "List (and optionally download) all the skills in your organization.")
         {
-            _workspaceFactory = workspaceFactory;
             this.AddDirectoryOption();
             this.AddOption<bool>(
                 "--get",
@@ -42,11 +38,11 @@ namespace Serious.Abbot.CommandLine.Commands
 
         async Task<int> HandleListCommandAsync(string? directory, bool get, bool force, bool includeDisabled, SkillOrderBy orderBy, OrderDirection direction)
         {
-            var workspace = _workspaceFactory.GetWorkspace(directory);
+            var workspace = GetWorkspace(directory);
             if (!workspace.IsInitialized)
             {
                 var directoryType = workspace.DirectorySpecified ? "specified" : "current";
-                Console.WriteLine($"The {directoryType} directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`");
+                Console.Out.WriteLine($"The {directoryType} directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`");
                 return 1;
             }
 
@@ -60,27 +56,28 @@ namespace Serious.Abbot.CommandLine.Commands
             {
                 foreach (var skillInfo in response.Results)
                 {
-                    await GetCommand.CreateSkillWorkspaceAsync(skillInfo, workspace, force);
+                    await GetCommand.CreateSkillWorkspaceAsync(skillInfo, workspace, Console, force);
                 }
             }
             else
             {
                 foreach (var skill in response.Results.Select(skill => skill.Name))
                 {
-                    Console.WriteLine(skill);
+                    Console.Out.WriteLine(skill);
                 }
             }
 
             return 0;
         }
 
-        static async Task<SkillListResponse?> GetSkillListAsync(
+        async Task<SkillListResponse?> GetSkillListAsync(
             Workspace workspace,
             SkillOrderBy orderBy,
             OrderDirection direction,
             bool includeDisabled)
         {
-            var response = await AbbotApi.CreateInstance(workspace).ListSkillsAsync(orderBy, direction, includeDisabled);
+            var response = await CreateApiClient(workspace)
+                .ListSkillsAsync(orderBy, direction, includeDisabled);
             if (!response.IsSuccessStatusCode)
             {
                 await response.HandleUnsuccessfulResponseAsync();
@@ -89,7 +86,7 @@ namespace Serious.Abbot.CommandLine.Commands
 
             if (response.Content is null)
             {
-                await Console.Error.WriteLineAsync("Response content is null");
+                Console.Error.WriteLine("Response content is null");
                 return null;
             }
 

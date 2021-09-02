@@ -10,5 +10,6 @@
         <Version>$(SemVersion).0</Version>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
 </Project>
