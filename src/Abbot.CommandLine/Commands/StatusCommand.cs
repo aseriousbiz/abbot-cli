@@ -1,19 +1,15 @@
-using System;
-using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.CommandLine.IO;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.Services;
+using Serious.Abbot.CommandLine.IO;
 
 namespace Serious.Abbot.CommandLine.Commands
 {
-    public class StatusCommand : Command
+    public class StatusCommand : AbbotCommand
     {
-        readonly IWorkspaceFactory _workspaceFactory;
-
-        public StatusCommand(IWorkspaceFactory workspaceFactory)
-            : base("status", "Get the status of the Abbot Workspace.")
+        public StatusCommand(ICommandContext commandContext)
+            : base(commandContext, "status", "Get the status of the Abbot Workspace.")
         {
-            _workspaceFactory = workspaceFactory;
             this.AddDirectoryOption();
             Handler = CommandHandler.Create<string?>(HandleStatusCommandAsync);
         }
@@ -25,13 +21,13 @@ namespace Serious.Abbot.CommandLine.Commands
 
         async Task<int> HandleStatusCommandAsync(string? directory)
         {
-            Console.WriteLine($"Running abbot-cli version {GetVersion()}");
-            var workspace = _workspaceFactory.GetWorkspace(directory);
+            Console.Out.WriteLine($"Running abbot-cli version {GetVersion()}");
+            var workspace = GetWorkspace(directory);
             var workingDir = workspace.WorkingDirectory.FullName;
             
             if (!workspace.WorkingDirectory.Exists)
             {
-                Console.WriteLine(Messages.Directory_Does_Not_Exist, workingDir);
+                Console.Out.WriteLine(Messages.Directory_Does_Not_Exist, workingDir);
                 return 0;
             }
 
@@ -39,18 +35,18 @@ namespace Serious.Abbot.CommandLine.Commands
             {
                 var initDirectory = !workspace.DirectorySpecified
                     ? ""
-                    : $" --directory {directory}";
-                Console.WriteLine(Messages.Directory_Is_Not_Abbot_Development_Enviroment, workingDir, initDirectory);
+                    : $" --directory {directory!}";
+                Console.Out.WriteLine(Messages.Directory_Is_Not_Abbot_Development_Enviroment, workingDir, initDirectory);
                 return 0;
             }
 
             if (!workspace.IsAuthenticated)
             {
-                Console.WriteLine(Messages.Abbot_Directory_Not_Authenticated, workingDir, directory);
+                Console.Out.WriteLine(Messages.Abbot_Directory_Not_Authenticated, workingDir, directory ?? ".");
                 return 0;
             }
 
-            var response = await AbbotApi.CreateInstance(workspace).GetStatusAsync();
+            var response = await CreateApiClient(workspace).GetStatusAsync();
             if (!response.IsSuccessStatusCode)
             {
                 if (!response.IsSuccessStatusCode)
@@ -61,7 +57,7 @@ namespace Serious.Abbot.CommandLine.Commands
 
             if (response.Content is null)
             {
-                await Console.Error.WriteLineAsync("No response from Abbot.");
+                Console.Error.WriteLine("No response from Abbot.");
                 return 1;
             }
 
@@ -71,7 +67,7 @@ namespace Serious.Abbot.CommandLine.Commands
             var status = @$"The directory {workingDir} is an authenticated Workspace.
 Organization: {organization.Name} ({organization.Platform} {organization.PlatformId})
 User: {user.Name} ({user.PlatformUserId})";
-            Console.WriteLine(status);
+            Console.Out.WriteLine(status);
             return 0;
         }
     }

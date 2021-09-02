@@ -128,18 +128,11 @@ namespace Serious.Abbot.CommandLine.Services
         /// <summary>
         /// Used to retrieve the code for the skill. This is used when running or deploying the code.
         /// </summary>
-        /// <param name="workspace">The Abbot Workspace.</param>
-        public async Task<CodeResult> GetCodeAsync(Workspace workspace)
+        public async Task<CodeResult> GetCodeAsync()
         {
-            if (!workspace.IsInitialized)
-            {
-                var directoryType = workspace.DirectorySpecified ? "specified" : "current";
-                return CodeResult.Fail($"The {directoryType} directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`");
-            }
-            
             if (!Exists)
             {
-                return CodeResult.Fail($"The directory {WorkingDirectory} does not exist. Have you run `abbot get {SkillName}` yet?");
+                return CodeResult.Fail($"The skill directory {WorkingDirectory} does not exist. Have you run `abbot get {SkillName}` yet? Or use the `--deployed` flag to run the deployed version of this skill on the server.");
             }
 
             var codeFile = await GetCodeFile();
