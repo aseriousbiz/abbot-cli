@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Serious.IO;
@@ -9,38 +8,31 @@ namespace Serious.Secrets
 {
     public class SecretStore : ISecretStore
     {
-        readonly IFileSystem _fileSystem;
-        readonly IFileInfo _secretFile;
+        readonly Lazy<IFileInfo> _lazySecretFile;
         readonly ISecretProtector _protector;
         bool _loaded = true;
-        readonly string _secretsFilePath;
         readonly IDictionary<string, string> _secrets = new Dictionary<string, string>();
         
         public SecretStore(
-            string secretsFilePath,
-            IFileSystem fileSystem,
+            Lazy<IFileInfo> lazySecretFile,
             ISecretProtector protector)
         {
-            _fileSystem = fileSystem;
             _protector = protector;
-            _secretsFilePath = secretsFilePath;
-            _secretFile = _fileSystem.GetFile(_secretsFilePath);
+            _lazySecretFile = lazySecretFile;
         }
 
         public async Task LoadAsync()
         {
             _secrets.Clear();
-            var secretDir = Path.GetDirectoryName(_secretsFilePath)!;
-            _fileSystem.CreateDirectory(secretDir);
-            if (_secretFile.Exists)
+            if (SecretFile.Exists)
             {
-                using var reader = _secretFile.OpenText();
+                using var reader = SecretFile.OpenText();
                 while (await reader.ReadLineAsync() is { Length: > 0 } line)
                 {
                     var secret = line.Split('|');
                     if (secret.Length != 2)
                     {
-                        throw new InvalidOperationException($"The secret file {_secretsFilePath} has been corrupted.");
+                        throw new InvalidOperationException($"The secret file {SecretFile.FullName} has been corrupted.");
                     }
 
                     var key = Decode(secret[0]);
@@ -57,7 +49,7 @@ namespace Serious.Secrets
 
         public async Task SaveAsync()
         {
-            await using var writer = _secretFile.OpenWriter();
+            await using var writer = SecretFile.OpenWriter();
             // We want to keep our dependencies minimal and for storing secrets, it seems a PIPE delimited file 
             // is plenty fine. No need to use JSON for this.
             foreach (var (key, value) in _secrets)
@@ -89,6 +81,8 @@ namespace Serious.Secrets
                     : null;
             }
         }
+
+        IFileInfo SecretFile => _lazySecretFile.Value;
 
         static string Decode(string encoded)
         {

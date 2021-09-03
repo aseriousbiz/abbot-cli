@@ -1,3 +1,4 @@
+using System;
 using Serious.IO;
 using Serious.Secrets;
 
@@ -8,7 +9,7 @@ namespace UnitTests.Fakes
         public FakeSecretStore(
             string secretsFilePath,
             IFileSystem fileSystem,
-            ISecretProtector protector) : base(secretsFilePath, fileSystem, protector)
+            ISecretProtector protector) : base(new Lazy<IFileInfo>(() => fileSystem.GetFile(secretsFilePath)), protector)
         {
         }
     }

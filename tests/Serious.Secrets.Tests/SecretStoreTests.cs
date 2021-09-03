@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using Serious.IO;
 using Serious.Secrets;
 using TestFakes;
 using Xunit;
@@ -13,8 +14,9 @@ public class SecretStoreTests
         public async Task LoadsSecretFromTheUnderlyingStore()
         {
             var fileSystem = new FakeFileSystem();
+            var lazySecretsFile = new Lazy<IFileInfo>(() => fileSystem.GetFile("~/.abbot/secrets/SECRET-GUID"));
             var secretProtector = new FakeSecretProtector();
-            var secretStore = new SecretStore("~/.abbot/secrets/SECRET-GUID", fileSystem, secretProtector);
+            var secretStore = new SecretStore(lazySecretsFile, secretProtector);
             var secretsFile = fileSystem.GetFile($"~/.abbot/secrets/SECRET-GUID");
             var key1 = Convert.ToBase64String(Encoding.UTF8.GetBytes("Key1"));
             var secret1 = secretProtector.Protect("The Cake is a Lie");
@@ -35,16 +37,16 @@ public class SecretStoreTests
         public async Task ReturnsNullWhenNotFound()
         {
             var fileSystem = new FakeFileSystem();
+            var lazySecretsFile = new Lazy<IFileInfo>(() => fileSystem.GetFile("~/.abbot/secrets/SECRET-GUID"));
             var secretProtector = new FakeSecretProtector();
-            var secretStore = new SecretStore("~/.abbot/secrets/SECRET-GUID", fileSystem, secretProtector);
+            var secretStore = new SecretStore(lazySecretsFile, secretProtector);
             await secretStore.LoadAsync();
 
-            var secret1 = secretStore["Key1"];
-            var secret2 = secretStore["Key2"];
+            var secret = secretStore["Key1"];
             
             var secretsFile = fileSystem.GetFile($"~/.abbot/secrets/SECRET-GUID");
             Assert.False(secretsFile.Exists);
-            Assert.Null(secret1);
+            Assert.Null(secret);
         }
     }
 
@@ -54,8 +56,9 @@ public class SecretStoreTests
         public async Task SavesSetSecretsToFile()
         {
             var fileSystem = new FakeFileSystem();
+            var lazySecretsFile = new Lazy<IFileInfo>(() => fileSystem.GetFile("~/.abbot/secrets/SECRET-GUID"));
             var secretProtector = new FakeSecretProtector();
-            var secretStore = new SecretStore("~/.abbot/secrets/SECRET-GUID", fileSystem, secretProtector);
+            var secretStore = new SecretStore(lazySecretsFile, secretProtector);
             await secretStore.LoadAsync();
             secretStore.SetSecret("Key1", "The Cake is a Lie");
             secretStore.SetSecret("Key2", "Soylent Green is people!");

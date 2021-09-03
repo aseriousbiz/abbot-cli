@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Serious.IO.CommandLine.Services;
 using Serious.Secrets;
 
@@ -16,7 +17,13 @@ namespace Serious.IO.CommandLine
             return secretsId =>
             {
                 var secretsFilePath = PathHelper.GetSecretsPathFromSecretsId(secretsId);
-                return new SecretStore(secretsFilePath, fileSystem, protector);
+                var secretsFile = new Lazy<IFileInfo>(() =>
+                {
+                    var secretDir = Path.GetDirectoryName(secretsFilePath)!;
+                    fileSystem.CreateDirectory(secretDir);
+                    return new FileInfoWrapper(secretsFilePath);
+                });
+                return new SecretStore(secretsFile, protector);
             };
         }
 
