@@ -25,7 +25,7 @@ namespace Serious.IO
         /// regardless of whether a directory at the specified path already exists.</returns>
         public IDirectoryInfo GetDirectory(string path)
         {
-            return new DirectoryInfoWrapper(new DirectoryInfo(path));
+            return new DirectoryInfoWrapper(path);
         }
 
         /// <summary>

@@ -117,7 +117,10 @@ public class SkillWorkspaceTests
         {
             var fileSystem = new FakeFileSystem();
             var directory = fileSystem.GetDirectory("./skills");
-            var tokenStore = FakeConstructors.TokenStoreConstructor(fileSystem)(directory.GetFile("./abbot/SecretsId"));
+            var tokenConstructor = FakeConstructors.TokenStoreConstructor(fileSystem);
+            var secretsIdFile = directory.GetFile("./abbot/SecretsId");
+            var secretsDirectoryFile = directory.GetFile("./abbot/SecretsDirectory");
+            var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
             var workspace = new Workspace(directory, true, tokenStore);
             await workspace.EnsureAsync();
             var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
@@ -143,7 +146,10 @@ public class SkillWorkspaceTests
         {
             var fileSystem = new FakeFileSystem();
             var directory = fileSystem.GetDirectory("./skills");
-            var tokenStore = FakeConstructors.TokenStoreConstructor(fileSystem)(directory.GetFile("./abbot/SecretsId"));
+            var tokenConstructor = FakeConstructors.TokenStoreConstructor(fileSystem);
+            var secretsIdFile = directory.GetFile("./abbot/SecretsId");
+            var secretsDirectoryFile = directory.GetFile("./abbot/SecretsDirectory");
+            var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
             var workspace = new Workspace(directory, true, tokenStore);
             await workspace.EnsureAsync();
             var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
@@ -166,7 +172,10 @@ public class SkillWorkspaceTests
         {
             var fileSystem = new FakeFileSystem();
             var directory = fileSystem.GetDirectory("./skills");
-            var tokenStore = FakeConstructors.TokenStoreConstructor(fileSystem)(directory.GetFile("./abbot/SecretsId"));
+            var tokenConstructor = FakeConstructors.TokenStoreConstructor(fileSystem);
+            var secretsIdFile = directory.GetFile("./abbot/SecretsId");
+            var secretsDirectoryFile = directory.GetFile("./abbot/SecretsDirectory");
+            var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
             var workspace = new Workspace(directory, true, tokenStore);
             await workspace.EnsureAsync();
             var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
@@ -183,7 +192,10 @@ public class SkillWorkspaceTests
         {
             var fileSystem = new FakeFileSystem();
             var directory = fileSystem.GetDirectory("./skills");
-            var tokenStore = FakeConstructors.TokenStoreConstructor(fileSystem)(directory.GetFile("./abbot/SecretsId"));
+            var tokenConstructor = FakeConstructors.TokenStoreConstructor(fileSystem);
+            var secretsIdFile = directory.GetFile("./abbot/SecretsId");
+            var secretsDirectoryFile = directory.GetFile("./abbot/SecretsDirectory");
+            var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
             var workspace = new Workspace(directory, true, tokenStore);
             await workspace.EnsureAsync();
             var skillDirectory = directory.GetSubdirectory("my-skill");

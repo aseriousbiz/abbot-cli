@@ -14,8 +14,7 @@ public class WorkspaceFactoryTests
         public void SetsDirectorySpecifiedWhenDirectoryNullOrEmpty(string? directory, bool expected)
         {
             var fileSystem = new FakeFileSystem();
-            var secretStoreConstructor =
-                FakeConstructors.SecretStoreConstructor(fileSystem, new FakeSecretProtector());
+            var secretStoreConstructor = FakeConstructors.SecretStoreConstructor(fileSystem, new FakeSecretProtector());
             var tokenConstructor = FakeConstructors.TokenStoreConstructor(secretStoreConstructor);
             var workspaceConstructor = FakeConstructors.WorkspaceConstructor();
             var factory = new WorkspaceFactory(fileSystem, tokenConstructor, workspaceConstructor);

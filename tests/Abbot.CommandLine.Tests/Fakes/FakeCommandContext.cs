@@ -12,7 +12,6 @@ namespace UnitTests.Fakes
             : this(
                 new FakeConsole(),
                 new FakeFileSystem(),
-                new FakeDataProtector(),
                 new FakeApiClientFactory())
         {
         }
@@ -20,9 +19,8 @@ namespace UnitTests.Fakes
         FakeCommandContext(
             FakeConsole console,
             FakeFileSystem fileSystem,
-            FakeDataProtector dataProtector,
             FakeApiClientFactory apiClientFactory)
-            : this(console, apiClientFactory, new FakeWorkspaceFactory(fileSystem, dataProtector))
+            : this(console, apiClientFactory, new FakeWorkspaceFactory(fileSystem))
         {
         }
 
@@ -33,16 +31,11 @@ namespace UnitTests.Fakes
             : base(console, apiClientFactory, workspaceFactory)
         {
             FakeConsole = console;
-            FakeFileSystem = workspaceFactory.FakeFileSystem;
-            FakeDataProtector = workspaceFactory.FakeDataProtector;
             _fakeApiClientFactory = apiClientFactory;
-            FakeWorkspaceFactory = workspaceFactory;
         }
         
-        public FakeFileSystem FakeFileSystem { get; }
         public FakeConsole FakeConsole { get; }
-        public FakeDataProtector FakeDataProtector { get; }
-        public FakeWorkspaceFactory FakeWorkspaceFactory { get; }
+
         public FakeApiClient GetFakeApiClient(Workspace workspace) => (_fakeApiClientFactory.Create(workspace) as FakeApiClient)!;
     }
 }

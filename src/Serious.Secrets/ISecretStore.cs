@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 namespace Serious.Secrets
 {
     /// <summary>
-    /// Stores secrets for an application. The application just needs to store a SecretId used to identify
+    /// Stores secrets for an application. The application just needs to store a SecretsId used to identify
     /// the secret store.
     /// </summary>
     public interface ISecretStore

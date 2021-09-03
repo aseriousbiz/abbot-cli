@@ -6,6 +6,10 @@ using Serious.IO;
 
 namespace Serious.Secrets
 {
+    /// <summary>
+    /// Stores secrets for an application in a secrets file.
+    /// The application just needs to store a SecretsId used to identify the secret store location (aka this).
+    /// </summary>
     public class SecretStore : ISecretStore
     {
         readonly Lazy<IFileInfo> _lazySecretFile;
@@ -13,9 +17,7 @@ namespace Serious.Secrets
         bool _loaded = true;
         readonly IDictionary<string, string> _secrets = new Dictionary<string, string>();
         
-        public SecretStore(
-            Lazy<IFileInfo> lazySecretFile,
-            ISecretProtector protector)
+        public SecretStore(Lazy<IFileInfo> lazySecretFile, ISecretProtector protector)
         {
             _protector = protector;
             _lazySecretFile = lazySecretFile;

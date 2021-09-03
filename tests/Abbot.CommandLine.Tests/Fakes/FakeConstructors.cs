@@ -1,5 +1,6 @@
 using System;
 using Serious.IO;
+using Serious.IO.CommandLine;
 using Serious.IO.CommandLine.Services;
 using Serious.Secrets;
 using TestFakes;
@@ -8,21 +9,25 @@ namespace UnitTests.Fakes
 {
     public class FakeConstructors
     {
-        public static Func<string, ISecretStore> SecretStoreConstructor(
+        public static Func<IFileInfo, IFileInfo, ITokenStore> TokenStoreConstructor(
+            Func<string, string?, ISecretStore> secretStoreConstructor)
+        {
+            return (secretsIdFile, secretsDirectoryFile) => new FakeTokenStore(
+                (FakeFileInfo)secretsIdFile,
+                (FakeFileInfo)secretsDirectoryFile,
+                secretStoreConstructor);
+        }
+
+        public static Func<string, string?, ISecretStore> SecretStoreConstructor(
             FakeFileSystem fileSystem,
-            FakeSecretProtector protector)
-        {
-            return secretsId => new FakeSecretStore($"~/.abbot/secrets/{secretsId}", fileSystem, protector);
-        }
+            ISecretProtector protector) =>
+                Constructors.SecretStoreConstructor(fileSystem, protector, sid => $".abbot/secrets/{sid}");
 
-        public static Func<IFileInfo, ITokenStore> TokenStoreConstructor(Func<string, ISecretStore> secretStoreConstructor)
+        public static Func<IFileInfo, IFileInfo, ITokenStore> TokenStoreConstructor(FakeFileSystem fileSystem)
         {
-            return secretsIdFile => new FakeTokenStore((FakeFileInfo)secretsIdFile, secretStoreConstructor);
-        }
-
-        public static Func<IFileInfo, ITokenStore> TokenStoreConstructor(FakeFileSystem fileSystem)
-        {
-            var secretStoreConstructor = SecretStoreConstructor(fileSystem, new FakeSecretProtector());
+            var secretStoreConstructor = SecretStoreConstructor(
+                fileSystem,
+                new FakeSecretProtector());
             return TokenStoreConstructor(secretStoreConstructor);
         }
 

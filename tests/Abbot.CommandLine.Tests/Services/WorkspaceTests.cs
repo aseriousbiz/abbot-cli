@@ -12,7 +12,10 @@ public class WorkspaceTests
         public void CreatesWorkspaceInstanceButNothingOnDisk()
         {
             var fileSystem = new FakeFileSystem();
-            var tokenStore = FakeConstructors.TokenStoreConstructor(fileSystem)(fileSystem.GetFile("./abbot/SecretsId"));
+            var tokenConstructor = FakeConstructors.TokenStoreConstructor(fileSystem);
+            var secretsIdFile = fileSystem.GetFile("./abbot/SecretsId");
+            var secretsDirectoryFile = fileSystem.GetFile("./abbot/SecretsDirectory");
+            var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
             var workspace = new Workspace(
                 fileSystem.GetDirectory("."),
                 true,
@@ -30,7 +33,11 @@ public class WorkspaceTests
         {
             var fileSystem = new FakeFileSystem();
             var workingDirectory = fileSystem.GetDirectory(".");
-            var tokenStore = FakeConstructors.TokenStoreConstructor(fileSystem)(fileSystem.GetFile("./abbot/SecretsId"));
+            var tokenConstructor = FakeConstructors.TokenStoreConstructor(fileSystem);
+            var secretsIdFile = fileSystem.GetFile("./abbot/SecretsId");
+            var secretsDirectoryFile = fileSystem.GetFile("./abbot/SecretsDirectory");
+            var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
+
             var workspace = new Workspace(workingDirectory, true, tokenStore);
 
             await workspace.EnsureAsync();

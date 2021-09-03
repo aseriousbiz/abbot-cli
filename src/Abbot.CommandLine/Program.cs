@@ -26,20 +26,7 @@ namespace Serious.IO.CommandLine
         /// <returns>0 on success, an exit code on failure.</returns>
         public static async Task<int> Main(string[] args)
         {
-            var fileSystem = new FileSystem();
-            var dataProtector = DataProtectionProvider
-                .Create("abbot")
-                .CreateProtector("Store Abbot Workspace Secrets");
-            var secretProtector = new SecretProtector(dataProtector);
-            var apiClientFactory = new ApiClientFactory();
-            var console = new ExtendedSystemConsole();
-            var tokenConstructor =
-                Constructors.CreateTokenStoreConstructor(
-                    Constructors.CreateSecretStoreConstructor(fileSystem, secretProtector));
-            var workspaceConstructor = Constructors.WorkspaceConstructor();
-            var workspaceFactory = new WorkspaceFactory(fileSystem, tokenConstructor, workspaceConstructor);
-            
-            var context = new CommandContext(console, apiClientFactory, workspaceFactory);
+            var context = Constructors.CreateCommandContext();
             
             var runCommand = new RunCommand(context);
             // Create a root command with some options

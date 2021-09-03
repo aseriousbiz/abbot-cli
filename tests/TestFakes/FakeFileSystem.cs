@@ -9,7 +9,6 @@ namespace TestFakes
     {
         readonly Dictionary<string, IDirectoryInfo> _directories = new();
         readonly Dictionary<string, IFileInfo> _files = new();
-        readonly Dictionary<string, string> _environmentVariables = new();
 
         public IDirectoryInfo CreateDirectory(string path)
         {
@@ -22,12 +21,5 @@ namespace TestFakes
         }
 
         public IFileInfo GetFile(string path) => _files.GetOrCreate(path, dir => new FakeFileInfo(dir));
-
-        public void SetEnvironmentVariable(string variable, string value) => _environmentVariables[variable] = value;
-
-        public string? GetEnvironmentVariable(string variable) =>
-            _environmentVariables.TryGetValue(variable, out var value)
-                ? value
-                : null;
     }
 }

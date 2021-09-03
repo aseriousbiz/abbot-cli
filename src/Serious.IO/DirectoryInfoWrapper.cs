@@ -5,7 +5,7 @@ namespace Serious.IO
     public class DirectoryInfoWrapper : FileSystemInfoWrapper<DirectoryInfo>, IDirectoryInfo
     {
         public DirectoryInfoWrapper(string path)
-            : this(new DirectoryInfo(path is {Length: 0} ? "." : path))
+            : this(new DirectoryInfo(path is {Length: 0} ? "." : Path.GetFullPath(path)))
         {
         }
 

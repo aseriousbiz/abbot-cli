@@ -6,12 +6,15 @@ namespace UnitTests.Fakes
 {
     public class FakeTokenStore : TokenStore
     {
-        public FakeTokenStore(FakeFileInfo secretIdFile, Func<string, ISecretStore> secretStoreConstructor)
-            : base(secretIdFile, secretStoreConstructor)
+        public FakeTokenStore(
+            FakeFileInfo secretsIdFile,
+            FakeFileInfo secretsDirectoryFile,
+            Func<string, string?, ISecretStore> secretStoreConstructor)
+            : base(secretsIdFile, secretsDirectoryFile, secretStoreConstructor)
         {
-            SecretIdFile = secretIdFile;
+            SecretsIdFile = secretsIdFile;
         }
         
-        public FakeFileInfo SecretIdFile { get; }
+        public FakeFileInfo SecretsIdFile { get; }
     }
 }

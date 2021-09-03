@@ -6,16 +6,14 @@ namespace Serious.IO
 {
     public class FileInfoWrapper : FileSystemInfoWrapper<FileInfo>, IFileInfo
     {
-        public FileInfoWrapper(string path) : this(new FileInfo(path))
+        public FileInfoWrapper(string path) : this(new FileInfo(Path.GetFullPath(path)))
         {
         }
 
         FileInfoWrapper(FileInfo fileInfo) : base(fileInfo)
         {
         }
-        
-        public Task<byte[]> ReadAllBytesAsync() => File.ReadAllBytesAsync(FullName);
-        
+
         public async Task<string?> ReadAllTextAsync()
         {
             if (!InnerFileSystemInfo.Exists)

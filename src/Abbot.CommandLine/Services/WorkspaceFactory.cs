@@ -7,7 +7,7 @@ namespace Serious.IO.CommandLine.Services
     /// </summary>
     public class WorkspaceFactory : IWorkspaceFactory
     {
-        readonly Func<IFileInfo, ITokenStore> _tokenConstructor;
+        readonly Func<IFileInfo, IFileInfo, ITokenStore> _tokenConstructor;
         readonly Func<IDirectoryInfo, bool, ITokenStore, Workspace> _workspaceConstructor;
         readonly IFileSystem _fileSystem;
 
@@ -20,7 +20,7 @@ namespace Serious.IO.CommandLine.Services
         /// <param name="workspaceConstructor">Method for creating a workspace.</param>
         public WorkspaceFactory(
             IFileSystem fileSystem,
-            Func<IFileInfo, ITokenStore> tokenStoreConstructor,
+            Func<IFileInfo, IFileInfo, ITokenStore> tokenStoreConstructor,
             Func<IDirectoryInfo, bool, ITokenStore, Workspace> workspaceConstructor)
         {
             _fileSystem = fileSystem;
@@ -39,8 +39,10 @@ namespace Serious.IO.CommandLine.Services
             var directorySpecified = directory is { Length: > 0 };
             var workingDirectory = _fileSystem.GetDirectory(directory is {Length: > 0} ? directory : ".");
             var metadataDirectory = workingDirectory.GetSubdirectory(".abbot");
-            var secretIdFile = metadataDirectory.GetFile("SecretsId");
-            var tokenStore = _tokenConstructor(secretIdFile);
+            var secretsIdFile = metadataDirectory.GetFile("SecretsId");
+            // This file is only used when overriding the default secrets location, such as on a CI server.
+            var secretsDirectoryFile = metadataDirectory.GetFile("SecretsDirectory");
+            var tokenStore = _tokenConstructor(secretsIdFile, secretsDirectoryFile);
             return _workspaceConstructor(workingDirectory, directorySpecified, tokenStore);
         }
     }
