@@ -14,7 +14,7 @@ public class SecretStoreTests
         {
             var fileSystem = new FakeFileSystem();
             var secretProtector = new FakeSecretProtector();
-            var secretStore = new SecretStore("SECRET-GUID", fileSystem, secretProtector, secretId => $"~/.abbot/secrets/{secretId}");
+            var secretStore = new SecretStore("~/.abbot/secrets/SECRET-GUID", fileSystem, secretProtector);
             var secretsFile = fileSystem.GetFile($"~/.abbot/secrets/SECRET-GUID");
             var key1 = Convert.ToBase64String(Encoding.UTF8.GetBytes("Key1"));
             var secret1 = secretProtector.Protect("The Cake is a Lie");
@@ -36,7 +36,7 @@ public class SecretStoreTests
         {
             var fileSystem = new FakeFileSystem();
             var secretProtector = new FakeSecretProtector();
-            var secretStore = new SecretStore("SECRET-GUID", fileSystem, secretProtector, secretId => $"~/.abbot/secrets/{secretId}");
+            var secretStore = new SecretStore("~/.abbot/secrets/SECRET-GUID", fileSystem, secretProtector);
             await secretStore.LoadAsync();
 
             var secret1 = secretStore["Key1"];
@@ -55,7 +55,7 @@ public class SecretStoreTests
         {
             var fileSystem = new FakeFileSystem();
             var secretProtector = new FakeSecretProtector();
-            var secretStore = new SecretStore("SECRET-GUID", fileSystem, secretProtector, secretId => $"~/.abbot/secrets/{secretId}");
+            var secretStore = new SecretStore("~/.abbot/secrets/SECRET-GUID", fileSystem, secretProtector);
             await secretStore.LoadAsync();
             secretStore.SetSecret("Key1", "The Cake is a Lie");
             secretStore.SetSecret("Key2", "Soylent Green is people!");

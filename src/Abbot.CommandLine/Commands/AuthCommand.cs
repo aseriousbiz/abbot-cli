@@ -13,6 +13,7 @@ namespace Serious.IO.CommandLine.Commands
         {
             this.AddDirectoryOption();
             this.AddOption<string>("--token", "-t", $"The API Key token created at {TokenPage}.");
+            this.AddOption<string>("--secrets-directory", "-sd", $"Specifies an alternative directory to use for secrets.");
             Handler = CommandHandler.Create<string?, string>(HandleAuthenticateCommandAsync);
         }
         

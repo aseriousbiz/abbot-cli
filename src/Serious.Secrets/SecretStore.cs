@@ -17,14 +17,13 @@ namespace Serious.Secrets
         readonly IDictionary<string, string> _secrets = new Dictionary<string, string>();
         
         public SecretStore(
-            string secretsId,
+            string secretsFilePath,
             IFileSystem fileSystem,
-            ISecretProtector protector,
-            Func<string, string> pathHelper)
+            ISecretProtector protector)
         {
             _fileSystem = fileSystem;
             _protector = protector;
-            _secretsFilePath = (pathHelper ?? throw new ArgumentNullException(nameof(pathHelper)))(secretsId);
+            _secretsFilePath = secretsFilePath;
             _secretFile = _fileSystem.GetFile(_secretsFilePath);
         }
 

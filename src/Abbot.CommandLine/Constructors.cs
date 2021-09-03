@@ -13,7 +13,11 @@ namespace Serious.IO.CommandLine
             IFileSystem fileSystem,
             ISecretProtector protector)
         {
-            return secretsId => new SecretStore(secretsId, fileSystem, protector, PathHelper.GetSecretsPathFromSecretsId);
+            return secretsId =>
+            {
+                var secretsFilePath = PathHelper.GetSecretsPathFromSecretsId(secretsId);
+                return new SecretStore(secretsFilePath, fileSystem, protector);
+            };
         }
 
         public static Func<IFileInfo, ITokenStore> CreateTokenStoreConstructor(Func<string, ISecretStore> secretStoreConstructor)

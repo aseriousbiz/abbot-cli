@@ -16,15 +16,15 @@ namespace Serious.IO.CommandLine.Services
         /// <see cref="IDirectoryInfo" /> from a directory path. This is useful for unit tests.
         /// </summary>
         /// <param name="fileSystem">The file system.</param>
-        /// <param name="tokenConstructor">Method for creating a constructor.</param>
+        /// <param name="tokenStoreConstructor">Method for creating a <see cref="ITokenStore"/>.</param>
         /// <param name="workspaceConstructor">Method for creating a workspace.</param>
         public WorkspaceFactory(
             IFileSystem fileSystem,
-            Func<IFileInfo, ITokenStore> tokenConstructor,
+            Func<IFileInfo, ITokenStore> tokenStoreConstructor,
             Func<IDirectoryInfo, bool, ITokenStore, Workspace> workspaceConstructor)
         {
             _fileSystem = fileSystem;
-            _tokenConstructor = tokenConstructor;
+            _tokenConstructor = tokenStoreConstructor;
             _workspaceConstructor = workspaceConstructor;
         }
         

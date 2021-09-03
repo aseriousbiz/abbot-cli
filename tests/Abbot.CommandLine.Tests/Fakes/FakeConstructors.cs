@@ -12,7 +12,7 @@ namespace UnitTests.Fakes
             FakeFileSystem fileSystem,
             FakeSecretProtector protector)
         {
-            return secretsId => new FakeSecretStore(secretsId, fileSystem, protector, secretId => $"~/.abbot/secrets/{secretId}");
+            return secretsId => new FakeSecretStore($"~/.abbot/secrets/{secretsId}", fileSystem, protector);
         }
 
         public static Func<IFileInfo, ITokenStore> TokenStoreConstructor(Func<string, ISecretStore> secretStoreConstructor)
