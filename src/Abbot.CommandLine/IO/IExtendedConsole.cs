@@ -1,7 +1,7 @@
 using System;
 using System.CommandLine;
 
-namespace Serious.Abbot.CommandLine.IO
+namespace Serious.IO
 {
     /// <summary>
     /// Adds Read methods to <see cref="IConsole"/>.

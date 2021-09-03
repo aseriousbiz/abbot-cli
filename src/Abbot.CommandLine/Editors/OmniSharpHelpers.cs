@@ -1,9 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.Commands;
-using Serious.Abbot.CommandLine.IO;
+using Serious.IO.CommandLine.Commands;
 
-namespace Serious.Abbot.CommandLine.Editors
+namespace Serious.IO.CommandLine.Editors
 {
     /// <summary>
     /// Methods for writing files to help Omnisharp out.

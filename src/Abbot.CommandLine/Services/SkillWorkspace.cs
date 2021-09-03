@@ -4,12 +4,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.Editors;
-using Serious.Abbot.CommandLine.IO;
-using Serious.Abbot.Entities;
-using Serious.Abbot.Messages;
+using Serious.IO.CommandLine.Editors;
+using Serious.IO.Entities;
+using Serious.IO.Messages;
 
-namespace Serious.Abbot.CommandLine.Services
+namespace Serious.IO.CommandLine.Services
 {
     /// <summary>
     /// A workspace for an Abbot skill. This is a directory within an Abbot <see cref="Workspace" /> 
@@ -41,11 +40,11 @@ namespace Serious.Abbot.CommandLine.Services
         /// <summary>
         /// Reads the concurrency file for the skill.
         /// </summary>
-        public Task<string> ReadConcurrencyFileAsync()
+        public Task<string?> ReadConcurrencyFileAsync()
         {
             return _concurrencyFile.Exists
                 ? _concurrencyFile.ReadAllTextAsync()
-                : Task.FromResult(string.Empty);
+                : Task.FromResult((string?)null);
         }
 
         /// <summary>
@@ -117,6 +116,11 @@ namespace Serious.Abbot.CommandLine.Services
             }
             
             var existingCode = await codeFile.ReadAllTextAsync();
+            if (existingCode is null)
+            {
+                return false;
+            }
+
             existingCode = OmniSharpHelpers.RemoveGlobalsDirective(existingCode);
 
             var existingCodeHash = await ReadConcurrencyFileAsync();
@@ -142,6 +146,11 @@ namespace Serious.Abbot.CommandLine.Services
             }
 
             var code = await codeFile.ReadAllTextAsync();
+            if (code is null)
+            {
+                return CodeResult.Fail($"Could not read the code file in {codeFile.FullName}");
+            }
+
             code = OmniSharpHelpers.RemoveGlobalsDirective(code);
             return CodeResult.Success(code);
         }

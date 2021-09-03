@@ -1,9 +1,8 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.CommandLine.IO;
 using System.Threading.Tasks;
 
-namespace Serious.Abbot.CommandLine.Commands
+namespace Serious.IO.CommandLine.Commands
 {
     public class ReplCommand : AbbotCommand
     {

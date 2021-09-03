@@ -1,4 +1,4 @@
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     public class OrganizationGetResponse
     {

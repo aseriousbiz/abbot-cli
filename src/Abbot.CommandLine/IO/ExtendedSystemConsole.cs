@@ -1,7 +1,7 @@
 using System;
 using System.CommandLine.IO;
 
-namespace Serious.Abbot.CommandLine.IO
+namespace Serious.IO
 {
     /// <summary>
     /// Extends <see cref="SystemConsole" /> with methods to read from the standard input stream.

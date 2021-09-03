@@ -1,4 +1,4 @@
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// Information about a user that owns an API Key

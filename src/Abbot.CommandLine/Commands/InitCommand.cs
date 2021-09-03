@@ -1,8 +1,7 @@
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.IO;
 
-namespace Serious.Abbot.CommandLine.Commands
+namespace Serious.IO.CommandLine.Commands
 {
     public class InitCommand : AbbotCommand
     {

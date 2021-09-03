@@ -1,7 +1,7 @@
 using Refit;
-using Serious.Abbot.CommandLine.Commands;
+using Serious.IO.CommandLine.Commands;
 
-namespace Serious.Abbot.CommandLine.Services
+namespace Serious.IO.CommandLine.Services
 {
     public class ApiClientFactory : IApiClientFactory
     {

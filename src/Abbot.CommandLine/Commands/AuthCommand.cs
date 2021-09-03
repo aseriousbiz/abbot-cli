@@ -1,9 +1,8 @@
 using System.CommandLine.Invocation;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.IO;
 
-namespace Serious.Abbot.CommandLine.Commands
+namespace Serious.IO.CommandLine.Commands
 {
     public class AuthCommand : AbbotCommand
     {
@@ -14,7 +13,6 @@ namespace Serious.Abbot.CommandLine.Commands
         {
             this.AddDirectoryOption();
             this.AddOption<string>("--token", "-t", $"The API Key token created at {TokenPage}.");
-
             Handler = CommandHandler.Create<string?, string>(HandleAuthenticateCommandAsync);
         }
         

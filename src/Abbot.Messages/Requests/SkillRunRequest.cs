@@ -1,4 +1,4 @@
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// Body of the request by the skill editor or abbot cli to run skill code. Primarily used to test current

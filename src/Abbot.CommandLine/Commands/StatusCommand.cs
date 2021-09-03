@@ -1,10 +1,12 @@
 using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.IO;
 
-namespace Serious.Abbot.CommandLine.Commands
+namespace Serious.IO.CommandLine.Commands
 {
+    /// <summary>
+    /// Returns the status of an Abbot Workspace.
+    /// </summary>
     public class StatusCommand : AbbotCommand
     {
         public StatusCommand(ICommandContext commandContext)

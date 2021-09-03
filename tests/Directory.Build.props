@@ -4,6 +4,10 @@
         <Copyright>Copyright © 2021</Copyright>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
         <WarningsAsErrors>true</WarningsAsErrors>
+        <WarningLevel>4</WarningLevel>
         <RunAnalyzers>false</RunAnalyzers>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 </Project>

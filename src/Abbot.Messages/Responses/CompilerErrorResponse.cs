@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Serious.Abbot.Messages.Models;
+using Serious.IO.Messages.Models;
 
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// A response when compiling a skill fails.

@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Refit;
 
-namespace Serious.Abbot.CommandLine
+namespace Serious.IO.CommandLine
 {
     public static class AbbotApi
     {

@@ -1,9 +1,8 @@
 using System.CommandLine;
 using System.CommandLine.IO;
-using Serious.Abbot.CommandLine.IO;
-using Serious.Abbot.CommandLine.Services;
+using Serious.IO.CommandLine.Services;
 
-namespace Serious.Abbot.CommandLine.Commands
+namespace Serious.IO.CommandLine.Commands
 {
     public abstract class AbbotCommand : Command
     {

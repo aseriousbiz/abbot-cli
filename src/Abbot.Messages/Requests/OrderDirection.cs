@@ -1,4 +1,4 @@
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// Determines whether the order is ascending or descending.

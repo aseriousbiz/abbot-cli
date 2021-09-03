@@ -1,6 +1,6 @@
 using System;
 
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// Provides additional information about a conflict. This can be retrieved on the client by examining the

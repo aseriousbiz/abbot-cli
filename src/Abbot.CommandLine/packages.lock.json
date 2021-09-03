@@ -233,6 +233,16 @@
         "dependencies": {
           "System.ComponentModel.Annotations": "5.0.0"
         }
+      },
+      "serious.io": {
+        "type": "Project"
+      },
+      "serious.secrets": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
+          "Serious.IO": "0.2.4"
+        }
       }
     }
   }

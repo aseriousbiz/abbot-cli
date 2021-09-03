@@ -1,7 +1,7 @@
-using Serious.Abbot.CommandLine.IO;
-using Serious.Abbot.CommandLine.Services;
+using Serious.IO;
+using Serious.IO.CommandLine.Services;
 
-namespace Serious.Abbot.CommandLine
+namespace Serious.IO.CommandLine
 {
     /// <summary>
     /// Context useful for each invocation.

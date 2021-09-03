@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-[assembly: CLSCompliant(true)]
-namespace Serious.Abbot.Entities
+[assembly: CLSCompliant(false)]
+namespace Serious.IO.Entities
 {
     /// <summary>
     /// The programming language for a skill.

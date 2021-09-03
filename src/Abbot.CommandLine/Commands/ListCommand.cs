@@ -2,10 +2,10 @@ using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.Services;
-using Serious.Abbot.Messages;
+using Serious.IO.CommandLine.Services;
+using Serious.IO.Messages;
 
-namespace Serious.Abbot.CommandLine.Commands
+namespace Serious.IO.CommandLine.Commands
 {
     public class ListCommand : AbbotCommand
     {
