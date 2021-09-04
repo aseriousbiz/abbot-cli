@@ -29,7 +29,7 @@ public class RunCommandTests
         var context = new FakeCommandContext();
         var command = new RunCommand(context);
         var workspace = context.GetWorkspace("./my-skills");
-        await workspace.EnsureAsync();
+        await workspace.EnsureAsync(null);
         var parseResult = command.Parse("run test \"some args\" -d ./my-skills");
 
         var result = await command.Handler!.InvokeAsync(new InvocationContext(parseResult, context.FakeConsole));
@@ -45,7 +45,7 @@ public class RunCommandTests
         var context = new FakeCommandContext();
         var command = new RunCommand(context);
         var workspace = context.GetWorkspace("./my-skills");
-        await workspace.EnsureAsync();
+        await workspace.EnsureAsync(null);
         var apiClient = context.CreateApiClient(workspace) as FakeApiClient;
         apiClient!.AddResponse("test", new SkillRunResponse { Replies = new List<string> {"Hello, World!"}});
         var skillWorkspace = workspace.GetSkillWorkspace("test");
@@ -65,7 +65,7 @@ public class RunCommandTests
         var context = new FakeCommandContext();
         var command = new RunCommand(context);
         var workspace = context.GetWorkspace("./my-skills");
-        await workspace.EnsureAsync();
+        await workspace.EnsureAsync(null);
         var apiClient = context.CreateApiClient(workspace) as FakeApiClient;
         apiClient!.AddResponse("test", new SkillRunResponse { Replies = new List<string> {"Hello, World!"}});
         var parseResult = command.Parse("run test \"some args\" -d ./my-skills -s");

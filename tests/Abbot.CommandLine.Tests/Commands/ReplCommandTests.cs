@@ -27,7 +27,7 @@ public class ReplCommandTests
         var context = new FakeCommandContext();
         var command = new ReplCommand(context, new RunCommand(context));
         var workspace = context.GetWorkspace("./my-skills");
-        await workspace.EnsureAsync();
+        await workspace.EnsureAsync(null);
         var parseResult = command.Parse("repl test \"some args\" -d ./my-skills");
 
         var result = await command.Handler!.InvokeAsync(new InvocationContext(parseResult, context.FakeConsole));

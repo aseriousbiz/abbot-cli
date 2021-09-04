@@ -40,7 +40,7 @@ public class WorkspaceTests
 
             var workspace = new Workspace(workingDirectory, true, tokenStore);
 
-            await workspace.EnsureAsync();
+            await workspace.EnsureAsync(null);
             
             Assert.True(workingDirectory.Exists);
             var omnisharpConfig = workingDirectory.GetFile("omnisharp.json");

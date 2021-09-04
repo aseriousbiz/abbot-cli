@@ -35,6 +35,15 @@ namespace Serious.IO.CommandLine.Services
         }
 
         /// <summary>
+        /// Uses the specified directory to store secrets instead of the default location.
+        /// </summary>
+        /// <param name="path">A path to a directory where secrets will be stored.</param>
+        public Task SetSecretsDirectoryAsync(string path)
+        {
+            return _secretsDirectoryFile.WriteAllTextAsync(path);
+        }
+
+        /// <summary>
         /// Stores the token in the <see cref="SecretStore"/> for the Workspace and stores the secret Id in the
         /// secret Id file (.abbot/SecretsId).
         /// </summary>

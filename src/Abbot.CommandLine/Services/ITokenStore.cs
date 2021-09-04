@@ -22,5 +22,11 @@ namespace Serious.IO.CommandLine.Services
         /// Whether or not a token has been stored.
         /// </summary>
         bool Empty { get; }
+
+        /// <summary>
+        /// Uses the specified directory to store secrets instead of the default location.
+        /// </summary>
+        /// <param name="path">A path to a directory where secrets will be stored.</param>
+        Task SetSecretsDirectoryAsync(string path);
     }
 }

@@ -26,7 +26,7 @@ namespace Serious.IO.CommandLine.Services
             DirectorySpecified = directorySpecified;
         }
 
-        public async Task EnsureAsync()
+        public async Task EnsureAsync(string? secretsDirectoryPath)
         {
             WorkingDirectory.Create();
             _metadataDirectory.Create();
@@ -34,6 +34,11 @@ namespace Serious.IO.CommandLine.Services
             
             await EnsureReferencesFileAsync();
             await EnsureOmniSharpConfigAsync();
+
+            if (secretsDirectoryPath is {Length: > 0})
+            {
+                await _tokenStore.SetSecretsDirectoryAsync(secretsDirectoryPath);
+            }
         }
         
         public bool Exists => WorkingDirectory.Exists;

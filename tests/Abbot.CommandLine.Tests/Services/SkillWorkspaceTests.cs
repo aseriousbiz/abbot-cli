@@ -122,7 +122,7 @@ public class SkillWorkspaceTests
             var secretsDirectoryFile = directory.GetFile("./abbot/SecretsDirectory");
             var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
             var workspace = new Workspace(directory, true, tokenStore);
-            await workspace.EnsureAsync();
+            await workspace.EnsureAsync(null);
             var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
             var response = new SkillGetResponse
             {
@@ -151,7 +151,7 @@ public class SkillWorkspaceTests
             var secretsDirectoryFile = directory.GetFile("./abbot/SecretsDirectory");
             var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
             var workspace = new Workspace(directory, true, tokenStore);
-            await workspace.EnsureAsync();
+            await workspace.EnsureAsync(null);
             var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
             var response = new SkillGetResponse
             {
@@ -177,7 +177,7 @@ public class SkillWorkspaceTests
             var secretsDirectoryFile = directory.GetFile("./abbot/SecretsDirectory");
             var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
             var workspace = new Workspace(directory, true, tokenStore);
-            await workspace.EnsureAsync();
+            await workspace.EnsureAsync(null);
             var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
             
             var codeResult = await skillWorkspace.GetCodeAsync();
@@ -197,7 +197,7 @@ public class SkillWorkspaceTests
             var secretsDirectoryFile = directory.GetFile("./abbot/SecretsDirectory");
             var tokenStore = tokenConstructor(secretsIdFile, secretsDirectoryFile);
             var workspace = new Workspace(directory, true, tokenStore);
-            await workspace.EnsureAsync();
+            await workspace.EnsureAsync(null);
             var skillDirectory = directory.GetSubdirectory("my-skill");
             var skillWorkspace = new SkillWorkspace(skillDirectory);
             skillDirectory.Create();
