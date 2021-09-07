@@ -29,7 +29,22 @@ $ abbot auth
 Type in the API Key token and hit ENTER:
 ```
 
-This launches a browser to a page where you can create an Abbot API Key. If you omit the directory argument, then it will set up the current directory as an Abbot Workspace. Once you have this set up, you can download a skill to work on it.
+This launches a browser to a page where you can create an Abbot API Key. Once you generate the key, paste it into the console and hit `ENTER`.
+
+If you omit the directory argument, then it will set up the current directory as an Abbot Workspace. Once you have an Abbot Workspace set up, you can download a skill to work on it.
+
+__Note about storing the token__
+
+When storing a token using the `abbot auth` command, a file named `SecretsId` is created and added to the `.abbot` directory in your Abbot Workspace. This file does not contain the token and should be committed to your version control. It contains an identifier to used to locate secrets stored elsewhere on your machine:
+
+* On Mac/Linux it goes to `~/.abbot/secrets/`
+* On Windows it goes to `%APPDATA%\Abbot\Secrets\`
+
+If you are running `abbot auth` in a CI environment, use the `--secrets-directory` to override where the secrets are stored. For example, you might run something like:
+
+```bash
+abbot auth --token {TOKEN} --secrets-directory ./secrets
+```
 
 ### Download a skill
 
