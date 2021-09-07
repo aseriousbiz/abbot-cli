@@ -1,7 +1,7 @@
 using System.CommandLine.IO;
 using System.Globalization;
 
-namespace Serious.Abbot.CommandLine.IO
+namespace Serious.IO
 {
     public static class StreamWriterExtensions
     {

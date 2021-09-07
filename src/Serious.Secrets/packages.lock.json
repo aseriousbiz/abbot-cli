@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "dependencies": {
+    ".NETStandard,Version=v2.1": {
+      "Microsoft.AspNetCore.DataProtection.Abstractions": {
+        "type": "Direct",
+        "requested": "[5.0.9, )",
+        "resolved": "5.0.9",
+        "contentHash": "tDcurs0meZytXW0/Fw6i8kfG4zpw9rqetQAPh9DWFDbUivyJLrseQKf69ZhynWnUOBut057B26brDQt63xQywA=="
+      },
+      "serious.io": {
+        "type": "Project"
+      }
+    }
+  }
+}

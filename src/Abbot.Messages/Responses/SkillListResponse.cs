@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// The response from calling https://api.ab.bot/api/cli/list. This is used by the Abbot CLI to

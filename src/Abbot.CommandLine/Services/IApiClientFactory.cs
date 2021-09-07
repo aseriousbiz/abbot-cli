@@ -1,4 +1,4 @@
-namespace Serious.Abbot.CommandLine.Services
+namespace Serious.IO.CommandLine.Services
 {
     /// <summary>
     /// Used to create Abbot API clients.

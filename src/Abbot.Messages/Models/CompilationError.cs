@@ -1,4 +1,4 @@
-namespace Serious.Abbot.Messages.Models
+namespace Serious.IO.Messages.Models
 {
     /// <summary>
     /// Represents a compilation error when compiling a user skill.

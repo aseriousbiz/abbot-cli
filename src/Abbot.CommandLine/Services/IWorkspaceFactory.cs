@@ -1,4 +1,4 @@
-namespace Serious.Abbot.CommandLine.Services
+namespace Serious.IO.CommandLine.Services
 {
     /// <summary>
     /// Factory for creating Abbot <see cref="Workspace" /> instances.

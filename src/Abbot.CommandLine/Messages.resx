@@ -19,8 +19,7 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="Auth_Message" xml:space="preserve">
-        <value>    Please visit {0} to generate an authentication token. I will attempt to open your browser for you.
-        </value>
+        <value>Please visit {0} to generate an authentication token. I will attempt to open your browser for you.</value>
     </data>
     <data name="Initialized_Abbot_Directory" xml:space="preserve">
         <value>Initialized an Abbot Workspace in {0}</value>

@@ -5,10 +5,8 @@
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>Link</TrimMode>
-        <LangVersion>preview</LangVersion>
         <AssemblyName>abbot</AssemblyName>
         <RootNamespace>Serious.Abbot.CommandLine</RootNamespace>
-        <Nullable>enable</Nullable>
         <CodeAnalysisRuleSet>CodeAnalysisRuleset.xml</CodeAnalysisRuleSet>
     </PropertyGroup>
 
@@ -37,5 +35,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Abbot.Messages\Abbot.Messages.csproj" />
+      <ProjectReference Include="..\Serious.IO\Serious.IO.csproj" />
+      <ProjectReference Include="..\Serious.Secrets\Serious.Secrets.csproj" />
     </ItemGroup>
 </Project>

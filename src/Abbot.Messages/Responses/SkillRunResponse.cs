@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// Body of the response when calling a skill via the skill editor or the abbot cli.

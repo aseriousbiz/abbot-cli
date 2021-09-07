@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using Refit;
-using Serious.Abbot.Messages;
+using Serious.IO.Messages;
 
-namespace Serious.Abbot.CommandLine
+namespace Serious.IO.CommandLine
 {
     /// <summary>
     /// Client to the Abbot API. Instances of this interface are created using Refit.

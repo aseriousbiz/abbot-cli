@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace Serious.Abbot.CommandLine.Commands
+namespace Serious.IO.CommandLine.Commands
 {
     /// <summary>
     /// Extensions on <see cref="Command" /> that encapsulate common command line options etc.

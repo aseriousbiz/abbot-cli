@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// A response when running a skill fails.

@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Serious.Abbot.CommandLine {
+namespace Serious.IO.CommandLine {
     using System;
     
     

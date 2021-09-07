@@ -1,13 +1,15 @@
 ﻿using System;
 using System.CommandLine;
-using System.CommandLine.IO;
 using System.Resources;
-using Serious.Abbot.CommandLine.Commands;
-using Serious.Abbot.CommandLine.Services;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.DataProtection;
+using Serious.IO.CommandLine.Commands;
+using Serious.IO.CommandLine.Services;
+using Serious.Secrets;
 
 [assembly:CLSCompliant(false)]
 [assembly:NeutralResourcesLanguage("en")]
-namespace Serious.Abbot.CommandLine
+namespace Serious.IO.CommandLine
 {
     class Program
     {
@@ -22,9 +24,10 @@ namespace Serious.Abbot.CommandLine
         /// </summary>
         /// <param name="args">The array of commandline arguments.</param>
         /// <returns>0 on success, an exit code on failure.</returns>
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
-            var context = new CommandContext();
+            var context = Constructors.CreateCommandContext();
+            
             var runCommand = new RunCommand(context);
             // Create a root command with some options
             var rootCommand = new RootCommand
@@ -40,9 +43,9 @@ namespace Serious.Abbot.CommandLine
             };
 
             rootCommand.Description = "Abbot command line. Use this to set up a local Abbot Workspace. To get started, run `abbot auth` in a directory where you want to edit skills.";
-            
+
             // Parse the incoming args and invoke the handler
-            return rootCommand.InvokeAsync(args).Result;
+            return await rootCommand.InvokeAsync(args);
         }
     }
 }

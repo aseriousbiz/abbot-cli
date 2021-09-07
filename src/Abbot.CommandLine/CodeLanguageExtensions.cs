@@ -1,6 +1,6 @@
-using Serious.Abbot.Entities;
+using Serious.IO.Entities;
 
-namespace Serious.Abbot.CommandLine
+namespace Serious.IO.CommandLine
 {
     public static class CodeLanguageExtensions
     {

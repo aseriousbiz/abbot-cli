@@ -1,4 +1,4 @@
-namespace Serious.Abbot.CommandLine
+namespace Serious.IO.CommandLine
 {
     public class CodeResult
     {

@@ -1,7 +1,7 @@
 ﻿using System;
-using Serious.Abbot.Entities;
+using Serious.IO.Entities;
 
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// The response from calling https://api.ab.bot/api/cli/{skill}/edit. This is used by the Abbot CLI to

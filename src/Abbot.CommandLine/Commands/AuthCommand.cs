@@ -1,9 +1,8 @@
 using System.CommandLine.Invocation;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Serious.Abbot.CommandLine.IO;
 
-namespace Serious.Abbot.CommandLine.Commands
+namespace Serious.IO.CommandLine.Commands
 {
     public class AuthCommand : AbbotCommand
     {
@@ -14,17 +13,17 @@ namespace Serious.Abbot.CommandLine.Commands
         {
             this.AddDirectoryOption();
             this.AddOption<string>("--token", "-t", $"The API Key token created at {TokenPage}.");
-
-            Handler = CommandHandler.Create<string?, string>(HandleAuthenticateCommandAsync);
+            this.AddOption<string>("--secrets-directory", "-sd", $"Specifies an alternative directory to use for secrets.");
+            Handler = CommandHandler.Create<string?, string, string?>(HandleAuthenticateCommandAsync);
         }
         
         /// <summary>
         /// Initiates authentication by launching the browser to the tokens page.
         /// </summary>
-        async Task<int> HandleAuthenticateCommandAsync(string? directory, string token)
+        async Task<int> HandleAuthenticateCommandAsync(string? directory, string token, string? secretsDirectory)
         {
             var workspace = GetWorkspace(directory);
-            await workspace.EnsureAsync();
+            await workspace.EnsureAsync(secretsDirectory);
             
             if (token is { Length: > 0 })
             {

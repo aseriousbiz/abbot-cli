@@ -1,4 +1,4 @@
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// How to order the returned skills.

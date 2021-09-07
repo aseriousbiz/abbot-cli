@@ -1,7 +1,6 @@
-using Serious.Abbot.CommandLine.IO;
-using Serious.Abbot.CommandLine.Services;
+using Serious.IO.CommandLine.Services;
 
-namespace Serious.Abbot.CommandLine
+namespace Serious.IO.CommandLine
 {
     /// <summary>
     /// Context useful for each invocation.
@@ -11,14 +10,10 @@ namespace Serious.Abbot.CommandLine
         readonly IWorkspaceFactory _workspaceFactory;
         readonly IApiClientFactory _apiClientFactory;
 
-        public CommandContext() : this(new ExtendedSystemConsole(), new WorkspaceFactory(), new ApiClientFactory())
-        {
-        }
-
         public CommandContext(
             IExtendedConsole console,
-            IWorkspaceFactory workspaceFactory,
-            IApiClientFactory apiClientFactory)
+            IApiClientFactory apiClientFactory,
+            IWorkspaceFactory workspaceFactory)
         {
             _workspaceFactory = workspaceFactory;
             _apiClientFactory = apiClientFactory;

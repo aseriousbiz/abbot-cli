@@ -1,32 +1,33 @@
 using System;
-using Serious.Abbot.CommandLine.IO;
 
-namespace Serious.Abbot.CommandLine.Services
+namespace Serious.IO.CommandLine.Services
 {
     /// <summary>
     /// Factory for creating Abbot <see cref="Workspace" /> instances backed by the file system.
     /// </summary>
     public class WorkspaceFactory : IWorkspaceFactory
     {
-        readonly Func<string, IDirectoryInfo> _directoryFactory;
-
-        /// <summary>
-        /// Constructs an instance of <see cref="WorkspaceFactory" />.
-        /// </summary>
-        public WorkspaceFactory() : this(directory => new DirectoryInfoWrapper(directory))
-        {
-        }
+        readonly Func<IFileInfo, IFileInfo, ITokenStore> _tokenConstructor;
+        readonly Func<IDirectoryInfo, bool, ITokenStore, Workspace> _workspaceConstructor;
+        readonly IFileSystem _fileSystem;
 
         /// <summary>
         /// Constructs an instance of <see cref="WorkspaceFactory" /> using the supplied function to retrieve an
         /// <see cref="IDirectoryInfo" /> from a directory path. This is useful for unit tests.
         /// </summary>
-        /// <param name="directoryFactory">A factory to turn paths into <see cref="IDirectoryInfo"/> instances.</param>
-        public WorkspaceFactory(Func<string, IDirectoryInfo> directoryFactory)
+        /// <param name="fileSystem">The file system.</param>
+        /// <param name="tokenStoreConstructor">Method for creating a <see cref="ITokenStore"/>.</param>
+        /// <param name="workspaceConstructor">Method for creating a workspace.</param>
+        public WorkspaceFactory(
+            IFileSystem fileSystem,
+            Func<IFileInfo, IFileInfo, ITokenStore> tokenStoreConstructor,
+            Func<IDirectoryInfo, bool, ITokenStore, Workspace> workspaceConstructor)
         {
-            _directoryFactory = directoryFactory;
+            _fileSystem = fileSystem;
+            _tokenConstructor = tokenStoreConstructor;
+            _workspaceConstructor = workspaceConstructor;
         }
-
+        
         /// <summary>
         /// Creates an instance of a <see cref="Workspace"/> pointing to the specified directory.
         /// Note that this doesn't create the actual workspace on disk. <see cref="Workspace.EnsureAsync"/> has to be
@@ -36,8 +37,13 @@ namespace Serious.Abbot.CommandLine.Services
         public Workspace GetWorkspace(string? directory)
         {
             var directorySpecified = directory is { Length: > 0 };
-            var workingDirectory = _directoryFactory(directory ?? ".");
-            return new Workspace(workingDirectory, directorySpecified);
+            var workingDirectory = _fileSystem.GetDirectory(directory is {Length: > 0} ? directory : ".");
+            var metadataDirectory = workingDirectory.GetSubdirectory(".abbot");
+            var secretsIdFile = metadataDirectory.GetFile("SecretsId");
+            // This file is only used when overriding the default secrets location, such as on a CI server.
+            var secretsDirectoryFile = metadataDirectory.GetFile("SecretsDirectory");
+            var tokenStore = _tokenConstructor(secretsIdFile, secretsDirectoryFile);
+            return _workspaceConstructor(workingDirectory, directorySpecified, tokenStore);
         }
     }
 }

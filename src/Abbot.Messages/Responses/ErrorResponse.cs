@@ -1,4 +1,4 @@
-namespace Serious.Abbot.Messages
+namespace Serious.IO.Messages
 {
     /// <summary>
     /// In some cases, when the API returns an error code such as 403, this is used as the body of the response in
