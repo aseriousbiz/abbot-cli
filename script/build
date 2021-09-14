@@ -1,5 +1,120 @@
-#! /bin/sh
+#!/bin/bash -eu
 
-dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -r linux-x64 -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/linux
-dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -r osx.10.12-x64 -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/osx
-dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -r win-x64 -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/win
+{ set +x; } 2>/dev/null
+SOURCE=$0
+DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+
+OS="Mac"
+if [[ -e "/c/" ]]; then
+	OS="Windows"
+fi
+
+WINDOWS=1
+MAC=1
+LINUX=1
+CONFIGURATION=Debug
+PUBLISH=0
+
+function usage() {
+	cat << EOF
+script/build [-d|-r] [-n -w|-m|-l]
+
+Platforms (optional, all enabled by default):
+	-n|--noplat, followed by one or more of
+		-w|--windows
+		-m|--mac
+		-l|--linux
+
+To enable specific platforms, pass in -n *first*, before setting the desired platform.
+
+Build configuration:
+	-d|--debug
+	-r|--release
+
+Publish:
+  -p
+
+EOF
+}
+
+
+while (( "$#" )); do
+	case "$1" in
+		-h|--help)
+			usage
+			exit 0
+		;;
+		-d|--debug)
+			CONFIGURATION=Debug
+		;;
+		-r|--release)
+			CONFIGURATION=Release
+		;;
+		-n|--noplat)
+			WINDOWS=0
+			MAC=0
+			LINUX=0
+		;;
+		-w|--windows)
+			WINDOWS=1
+		;;
+		-m|--mac)
+			MAC=1
+		;;
+		-l|--linux)
+			LINUX=1
+		;;
+		-p|--publish)
+			PUBLISH=1
+		;;
+		--trace)
+		{ set -x; } 2>/dev/null
+		;;
+		-*|--*=) # unsupported flags
+			echo "Error: Unsupported flag $1" >&2
+			usage
+			exit 1
+		;;
+	esac
+	shift
+done
+
+function build() {
+	conf=$1
+	arch=$2
+	out=$3
+	dotnet publish src/Abbot.CommandLine/Abbot.CommandLine.csproj -c $conf -r $arch -p:PublishSingleFile=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -o ./publish/$out
+}
+
+function package() {
+	arch=$1
+	if [[ x"$OS" == x"Windows" ]]; then
+		7z a '-x!*.DS_Store' -r ./publish/${arch}.zip ./publish/${arch}/
+	else
+		zip -vr ./publish/${arch}.zip ./publish/${arch}/ -x "*.DS_Store"
+	fi	
+}
+
+if [[ x"$WINDOWS" == x"1" ]]; then
+	build $CONFIGURATION win-x64 win
+
+	if [[ x"$PUBLISH" == x"1" ]]; then
+		package win
+	fi
+fi
+
+if [[ x"$MAC" == x"1" ]]; then
+	build $CONFIGURATION osx.10.12-x64 osx
+
+	if [[ x"$PUBLISH" == x"1" ]]; then
+		package osx
+	fi
+fi
+
+if [[ x"$LINUX" == x"1" ]]; then
+	build $CONFIGURATION linux-x64 linux
+
+	if [[ x"$PUBLISH" == x"1" ]]; then
+		package linux
+	fi
+fi

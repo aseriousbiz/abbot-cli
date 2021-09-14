@@ -1,6 +1,16 @@
 name: Build Abbot CLI
 
 on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag'
+        required: false
+        default: ''
+      artifact:
+        description: 'Publish artifacts'
+        required: false
+        default: '0'
   push:
     branches:
       - main
@@ -19,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout main branch
+    - name: Checkout branch
       uses: actions/checkout@v2
     
     - name: Setup .NET 5
@@ -35,3 +45,77 @@ jobs:
 
     - name: Run Tests
       run: dotnet test ${{ env.APP_SOLUTION }} --configuration Release --no-build --nologo
+
+    - name: Build for Publishing
+      run: script/build -r
+      if: github.event_name != 'pull_request'
+
+    - name: Parse inputs
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      uses: actions-ecosystem/action-regex-match@v2
+      id: parse_input
+      with:
+        text: ${{ github.event.inputs.tag }}
+        regex: '^[\w\.-]+$'
+
+    - name: Archive Windows
+      uses: thedoctor0/zip-release@master
+      if: github.event_name != 'pull_request'
+      with:
+        type: 'zip'
+        filename: '../../win.zip'
+        directory: publish/win
+
+    - name: Archive Linux
+      uses: thedoctor0/zip-release@master
+      if: github.event_name != 'pull_request'
+      with:
+        type: 'zip'
+        filename: '../../linux.zip'
+        directory: publish/linux
+
+    - name: Archive Mac
+      uses: thedoctor0/zip-release@master
+      if: github.event_name != 'pull_request'
+      with:
+        type: 'zip'
+        filename: '../../osx.zip'
+        directory: publish/osx
+
+    - name: Create release
+      uses: marvinpinto/action-automatic-releases@latest
+      if: ${{ github.event_name == 'workflow_dispatch' && steps.parse_input.outputs.match != '' }}
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: ${{ steps.parse_input.outputs.match }}
+        prerelease: true
+        draft: true
+        title: Release ${{ steps.parse_input.outputs.match }}
+        files: |
+          win.zip
+          linux.zip
+          osx.zip
+
+    - name: Upload Win
+      uses: actions/upload-artifact@v2
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.artifact == '1' }}
+      with:
+        name: 'win'
+        path: publish/win
+        retention-days: 7
+
+    - name: Upload Mac
+      uses: actions/upload-artifact@v2
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.artifact == '1' }}
+      with:
+        name: 'osx'
+        path: publish/osx
+        retention-days: 7
+
+    - name: Upload Linux
+      uses: actions/upload-artifact@v2
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.artifact == '1' }}
+      with:
+        name: 'linux'
+        path: publish/linux
+        retention-days: 7
