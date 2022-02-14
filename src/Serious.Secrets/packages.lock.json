@@ -11,6 +11,7 @@
       "serious.io": {
         "type": "Project"
       }
-    }
+    },
+    ".NETStandard,Version=v2.1/linux-x64": {}
   }
 }
