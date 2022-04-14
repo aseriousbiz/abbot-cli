@@ -2,10 +2,7 @@
 using System.CommandLine;
 using System.Resources;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.DataProtection;
 using Serious.IO.CommandLine.Commands;
-using Serious.IO.CommandLine.Services;
-using Serious.Secrets;
 
 [assembly:CLSCompliant(false)]
 [assembly:NeutralResourcesLanguage("en")]
@@ -16,7 +13,7 @@ namespace Serious.IO.CommandLine
 #if DEBUG
         internal const string Website = "https://localhost:4979";
 #else
-        internal const string Website = "https://ab.bot";
+        internal const string Website = "https://app.ab.bot";
 #endif
 
         /// <summary>
@@ -27,7 +24,7 @@ namespace Serious.IO.CommandLine
         public static async Task<int> Main(string[] args)
         {
             var context = Constructors.CreateCommandContext();
-            
+
             var runCommand = new RunCommand(context);
             // Create a root command with some options
             var rootCommand = new RootCommand
