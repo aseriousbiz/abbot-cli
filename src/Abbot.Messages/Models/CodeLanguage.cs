@@ -10,8 +10,10 @@ namespace Serious.IO.Entities
     public enum CodeLanguage
     {
         [Display(Name = "C#")]
-        CSharp,
-        Python,
-        JavaScript
+        CSharp = 0,
+        Python = 1,
+        JavaScript = 2,
+        Ink = 3,
+        None = int.MaxValue,
     }
 }
