@@ -1282,13 +1282,13 @@
       "abbot": {
         "type": "Project",
         "dependencies": {
-          "Abbot.Messages": "0.2.4",
+          "Abbot.Messages": "0.2.6",
           "Microsoft.AspNetCore.DataProtection": "5.0.9",
           "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
           "Microsoft.AspNetCore.DataProtection.Extensions": "5.0.9",
           "Refit": "6.0.94",
-          "Serious.IO": "0.2.4",
-          "Serious.Secrets": "0.2.4",
+          "Serious.IO": "0.2.6",
+          "Serious.Secrets": "0.2.6",
           "System.CommandLine": "2.0.0-beta1.21308.1"
         }
       },
@@ -1305,7 +1305,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
-          "Serious.IO": "0.2.4"
+          "Serious.IO": "0.2.6"
         }
       },
       "serious.secrets.tests": {
@@ -1313,7 +1313,7 @@
         "dependencies": {
           "Microsoft.AspNetCore.WebUtilities": "2.2.0",
           "Microsoft.NET.Test.Sdk": "16.11.0",
-          "Serious.Secrets": "0.2.4",
+          "Serious.Secrets": "0.2.6",
           "TestFakes": "1.0.0",
           "xunit": "2.4.1"
         }
@@ -1322,8 +1322,8 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "16.11.0",
-          "Serious.IO": "0.2.4",
-          "Serious.Secrets": "0.2.4",
+          "Serious.IO": "0.2.6",
+          "Serious.Secrets": "0.2.6",
           "xunit": "2.4.1"
         }
       }

@@ -1136,15 +1136,15 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
-          "Serious.IO": "0.2.4"
+          "Serious.IO": "0.2.6"
         }
       },
       "testfakes": {
         "type": "Project",
         "dependencies": {
           "Microsoft.NET.Test.Sdk": "16.11.0",
-          "Serious.IO": "0.2.4",
-          "Serious.Secrets": "0.2.4",
+          "Serious.IO": "0.2.6",
+          "Serious.Secrets": "0.2.6",
           "xunit": "2.4.1"
         }
       }
