@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    ".NETCoreApp,Version=v5.0": {
+    "net7.0": {
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[16.11.0, )",
@@ -452,11 +452,6 @@
           "Microsoft.CSharp": "4.4.1",
           "system.memory": "4.5.4"
         }
-      },
-      "System.ComponentModel.Annotations": {
-        "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "dMkqfy2el8A8/I76n2Hi1oBFEbG1SfxD2l5nhwXV3XjlnOmwxJlQbYpJH4W51odnU9sARCSAgv7S3CyAFMkpYg=="
       },
       "System.Console": {
         "type": "Transitive",
@@ -1282,20 +1277,13 @@
       "abbot": {
         "type": "Project",
         "dependencies": {
-          "Abbot.Messages": "0.2.6",
-          "Microsoft.AspNetCore.DataProtection": "5.0.9",
-          "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
-          "Microsoft.AspNetCore.DataProtection.Extensions": "5.0.9",
-          "Refit": "6.0.94",
-          "Serious.IO": "0.2.6",
-          "Serious.Secrets": "0.2.6",
-          "System.CommandLine": "2.0.0-beta1.21308.1"
-        }
-      },
-      "abbot.messages": {
-        "type": "Project",
-        "dependencies": {
-          "System.ComponentModel.Annotations": "5.0.0"
+          "Microsoft.AspNetCore.DataProtection": "[5.0.9, )",
+          "Microsoft.AspNetCore.DataProtection.Abstractions": "[5.0.9, )",
+          "Microsoft.AspNetCore.DataProtection.Extensions": "[5.0.9, )",
+          "Refit": "[6.0.94, )",
+          "Serious.IO": "[0.3.0, )",
+          "Serious.Secrets": "[0.3.0, )",
+          "System.CommandLine": "[2.0.0-beta1.21308.1, )"
         }
       },
       "serious.io": {
@@ -1304,27 +1292,27 @@
       "serious.secrets": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
-          "Serious.IO": "0.2.6"
+          "Microsoft.AspNetCore.DataProtection.Abstractions": "[5.0.9, )",
+          "Serious.IO": "[0.3.0, )"
         }
       },
       "serious.secrets.tests": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.WebUtilities": "2.2.0",
-          "Microsoft.NET.Test.Sdk": "16.11.0",
-          "Serious.Secrets": "0.2.6",
-          "TestFakes": "1.0.0",
-          "xunit": "2.4.1"
+          "Microsoft.AspNetCore.WebUtilities": "[2.2.0, )",
+          "Microsoft.NET.Test.Sdk": "[16.11.0, )",
+          "Serious.Secrets": "[0.3.0, )",
+          "TestFakes": "[0.3.0, )",
+          "xunit": "[2.4.1, )"
         }
       },
       "testfakes": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.NET.Test.Sdk": "16.11.0",
-          "Serious.IO": "0.2.6",
-          "Serious.Secrets": "0.2.6",
-          "xunit": "2.4.1"
+          "Microsoft.NET.Test.Sdk": "[16.11.0, )",
+          "Serious.IO": "[0.3.0, )",
+          "Serious.Secrets": "[0.3.0, )",
+          "xunit": "[2.4.1, )"
         }
       }
     }

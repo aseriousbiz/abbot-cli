@@ -2,15 +2,15 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.Threading.Tasks;
+using Serious.Abbot.Messages;
 using Serious.IO.CommandLine.Services;
-using Serious.IO.Messages;
 
 namespace Serious.IO.CommandLine.Commands
 {
     public class GetCommand : AbbotCommand
     {
         public const string SkillMetaFolder = ".meta";
-        
+
         public GetCommand(ICommandContext commandContext)
             : base(commandContext, "get", "Downloads the specified skill code into a directory named after the skill.")
         {
@@ -32,7 +32,7 @@ namespace Serious.IO.CommandLine.Commands
                 Console.Out.WriteLine($"The {directoryType} directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`");
                 return 1;
             }
-            
+
             var skillInfo = await GetSkillInfoAsync(skill, workspace);
             if (skillInfo is null)
             {
@@ -47,7 +47,7 @@ namespace Serious.IO.CommandLine.Commands
             bool directoryExists = skillWorkspace.Exists;
 
             var verb = directoryExists ? "Updated" : "Created";
-            
+
             Console.Out.WriteLine(@$"{verb} skill directory {skillWorkspace.WorkingDirectory}
 Edit the code in the directory. When you are ready to deploy it, run 
 
@@ -63,7 +63,7 @@ Edit the code in the directory. When you are ready to deploy it, run
             bool force)
         {
             var skillWorkspace = workspace.GetSkillWorkspace(skillInfo.Name);
-            
+
             if (!force && skillWorkspace.Exists && await skillWorkspace.HasLocalChangesAsync(skillInfo.Language))
             {
                 console.Out.Write("You have local changes to the code that would be overwritten by getting the latest code.\nOverwrite local changes? Hit Y to overwrite, any other key to cancel: ");

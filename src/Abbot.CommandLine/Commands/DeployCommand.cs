@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.Threading.Tasks;
-using Serious.IO.Messages;
+using Serious.Abbot.Messages;
 
 namespace Serious.IO.CommandLine.Commands
 {
@@ -15,7 +15,7 @@ namespace Serious.IO.CommandLine.Commands
             this.AddDirectoryOption();
             Handler = CommandHandler.Create<string, string?>(HandleUploadCommandAsync);
         }
-        
+
         async Task<int> HandleUploadCommandAsync(string skill, string? directory)
         {
             var workspace = GetWorkspace(directory);
@@ -25,14 +25,14 @@ namespace Serious.IO.CommandLine.Commands
             {
                 return HandleUninitializedWorkspace(workspace);
             }
-            
+
             var codeResult = await skillWorkspace.GetCodeAsync();
             if (!codeResult.IsSuccess)
             {
                 Console.Error.WriteLine(codeResult.ErrorMessage ?? "Unknown error occurred");
                 return 1;
             }
-            
+
             var code = codeResult.Code!;
 
             var previousCodeHash = await skillWorkspace.ReadConcurrencyFileAsync();
@@ -52,7 +52,7 @@ namespace Serious.IO.CommandLine.Commands
             }
 
             var result = response.Content;
-            
+
             if (result is null)
             {
                 Console.Out.WriteLine($"The skill directory has been corrupted. Please run `abbot get {skill} -d {directory}` to restore the state.");

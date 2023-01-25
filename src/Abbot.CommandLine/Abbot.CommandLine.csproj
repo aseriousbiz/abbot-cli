@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>Link</TrimMode>
@@ -34,7 +34,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Abbot.Messages\Abbot.Messages.csproj" />
       <ProjectReference Include="..\Serious.IO\Serious.IO.csproj" />
       <ProjectReference Include="..\Serious.Secrets\Serious.Secrets.csproj" />
     </ItemGroup>

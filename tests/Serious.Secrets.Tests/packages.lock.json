@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    ".NETCoreApp,Version=v5.0": {
+    "net7.0": {
       "Microsoft.AspNetCore.WebUtilities": {
         "type": "Direct",
         "requested": "[2.2.0, )",
@@ -1135,17 +1135,17 @@
       "serious.secrets": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
-          "Serious.IO": "0.2.6"
+          "Microsoft.AspNetCore.DataProtection.Abstractions": "[5.0.9, )",
+          "Serious.IO": "[0.3.0, )"
         }
       },
       "testfakes": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.NET.Test.Sdk": "16.11.0",
-          "Serious.IO": "0.2.6",
-          "Serious.Secrets": "0.2.6",
-          "xunit": "2.4.1"
+          "Microsoft.NET.Test.Sdk": "[16.11.0, )",
+          "Serious.IO": "[0.3.0, )",
+          "Serious.Secrets": "[0.3.0, )",
+          "xunit": "[2.4.1, )"
         }
       }
     }

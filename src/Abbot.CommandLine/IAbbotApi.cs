@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Refit;
-using Serious.IO.Messages;
+using Serious.Abbot.Messages;
 
 namespace Serious.IO.CommandLine
 {
@@ -16,7 +16,7 @@ namespace Serious.IO.CommandLine
         /// <param name="skill">The name of the skill to retrieve.</param>
         [Get("/api/cli/{skill}")]
         Task<ApiResponse<SkillGetResponse>> GetSkillAsync(string skill);
-        
+
         /// <summary>
         /// Get the status of an Abbot Workspace such as whether it's authenticated, and to which org and user
         /// it's authenticated.
@@ -39,7 +39,7 @@ namespace Serious.IO.CommandLine
         /// <param name="runRequest">Information about the skill to run.</param>
         [Post("/api/cli/{skill}/run")]
         Task<ApiResponse<SkillRunResponse>> RunSkillAsync(string skill, SkillRunRequest runRequest);
-        
+
         /// <summary>
         /// Runs the deployed version of a skill in the Abbot Skill Runner, regardless of what is stored locally
         /// for that skill.

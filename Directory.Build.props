@@ -1,9 +1,9 @@
 <Project>
     <PropertyGroup>
-        <SemVersion>0.2.6</SemVersion>
-        <LangVersion>9.0</LangVersion>
+        <SemVersion>0.3.0</SemVersion>
+        <LangVersion>11.0</LangVersion>
         <Company>A Serious Business, Inc.</Company>
-        <Copyright>Copyright © 2021</Copyright>
+        <Copyright>Copyright © 2023</Copyright>
         <AssemblyVersion>$(SemVersion).0</AssemblyVersion>
         <InformationalVersion>$(SemVersion)-beta</InformationalVersion>
         <FileVersion>$(SemVersion).0</FileVersion>
@@ -14,5 +14,6 @@
         <WarningLevel>4</WarningLevel>
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
+        <DefaultTargetFramework>net7.0</DefaultTargetFramework>
     </PropertyGroup>
 </Project>

@@ -16,7 +16,7 @@ namespace Serious.IO.CommandLine
         /// <returns>The error code to return.</returns>
         public static async Task<int> HandleUnsuccessfulResponseAsync<T>(this ApiResponse<T> response)
         {
-            if (response.Error is ValidationApiException {Content: {Detail: {Length: > 0}}} exception)
+            if (response.Error is ValidationApiException {Content.Detail.Length: > 0 } exception)
             {
                 await Console.Error.WriteLineAsync(exception.Content.Detail);
                 return 1;

@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
+using Serious.Abbot.Messages;
 using Serious.IO.CommandLine.Services;
-using Serious.IO.Entities;
-using Serious.IO.Messages;
 using TestFakes;
 using UnitTests.Fakes;
 using Xunit;
@@ -14,9 +13,9 @@ public class SkillWorkspaceTests
         public void CreatesSkillWorkspaceInstanceButNothingOnDisk()
         {
             var skillDirectory = new FakeDirectoryInfo("./skills/my-skill");
-            
+
             var workspace = new SkillWorkspace(skillDirectory);
-            
+
             Assert.False(workspace.Exists);
             Assert.False(skillDirectory.Exists);
         }
@@ -36,7 +35,7 @@ public class SkillWorkspaceTests
             };
 
             await workspace.CreateAsync(response);
-            
+
             Assert.True(workspace.Exists);
             Assert.True(skillDirectory.Exists);
             var skillMetaDirectory = skillDirectory.GetSubdirectory(".meta");
@@ -44,7 +43,7 @@ public class SkillWorkspaceTests
             var concurrencyFile = skillMetaDirectory.GetFile(".concurrency");
             Assert.True(concurrencyFile.Exists);
         }
-        
+
         [Fact]
         public async Task WritesConcurrencyFileToDisk()
         {
@@ -57,13 +56,13 @@ public class SkillWorkspaceTests
             };
 
             await workspace.CreateAsync(response);
-            
+
             var concurrencyFile = skillDirectory.GetSubdirectory(".meta").GetFile(".concurrency");
             Assert.True(concurrencyFile.Exists);
             var written = await concurrencyFile.ReadAllTextAsync();
             Assert.Equal("abc123", written);
         }
-        
+
         [Theory]
         [InlineData(CodeLanguage.Python, "py")]
         [InlineData(CodeLanguage.JavaScript, "js")]
@@ -79,13 +78,13 @@ public class SkillWorkspaceTests
             };
 
             await workspace.CreateAsync(response);
-            
+
             var codeFile = skillDirectory.GetFile($"main.{ext}");
             Assert.True(codeFile.Exists);
             var written = await codeFile.ReadAllTextAsync();
             Assert.Equal("// This is the code", written);
         }
-        
+
         [Fact]
         public async Task WritesCSharpCodeFileToDiskWithDirective()
         {
@@ -99,7 +98,7 @@ public class SkillWorkspaceTests
             };
 
             await workspace.CreateAsync(response);
-            
+
             var codeFile = skillDirectory.GetFile("main.csx");
             Assert.True(codeFile.Exists);
             var written = await codeFile.ReadAllTextAsync();
@@ -133,11 +132,11 @@ public class SkillWorkspaceTests
             await skillWorkspace.CreateAsync(response);
 
             var codeResult = await skillWorkspace.GetCodeAsync();
-            
+
             Assert.True(codeResult.IsSuccess);
             Assert.Equal("# This is the code", codeResult.Code);
         }
-        
+
         [Theory]
         [InlineData(CodeLanguage.CSharp)]
         [InlineData(CodeLanguage.Python)]
@@ -162,7 +161,7 @@ public class SkillWorkspaceTests
             await skillWorkspace.CreateAsync(response);
 
             var codeResult = await skillWorkspace.GetCodeAsync();
-            
+
             Assert.True(codeResult.IsSuccess);
             Assert.Equal("# This is the code", codeResult.Code);
         }
@@ -179,14 +178,14 @@ public class SkillWorkspaceTests
             var workspace = new Workspace(directory, true, tokenStore);
             await workspace.EnsureAsync(null);
             var skillWorkspace = new SkillWorkspace(directory.GetSubdirectory("my-skill"));
-            
+
             var codeResult = await skillWorkspace.GetCodeAsync();
-            
+
             Assert.False(codeResult.IsSuccess);
             Assert.Null(codeResult.Code);
             Assert.Equal("The skill directory ./skills/my-skill does not exist. Have you run `abbot get my-skill` yet? Or use the `--deployed` flag to run the deployed version of this skill on the server.", codeResult.ErrorMessage);
         }
-        
+
         [Fact]
         public async Task ReportsErrorWhenCodeDoesNotExist()
         {
@@ -201,9 +200,9 @@ public class SkillWorkspaceTests
             var skillDirectory = directory.GetSubdirectory("my-skill");
             var skillWorkspace = new SkillWorkspace(skillDirectory);
             skillDirectory.Create();
-            
+
             var codeResult = await skillWorkspace.GetCodeAsync();
-            
+
             Assert.False(codeResult.IsSuccess);
             Assert.Null(codeResult.Code);
             Assert.Equal("Did not find a code file in ./skills/my-skill", codeResult.ErrorMessage);

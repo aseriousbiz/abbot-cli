@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    ".NETCoreApp,Version=v5.0": {
+    "net7.0": {
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[16.11.0, )",
@@ -1099,8 +1099,8 @@
       "serious.secrets": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
-          "Serious.IO": "0.2.6"
+          "Microsoft.AspNetCore.DataProtection.Abstractions": "[5.0.9, )",
+          "Serious.IO": "[0.3.0, )"
         }
       }
     }
