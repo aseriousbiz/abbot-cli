@@ -38,7 +38,7 @@ jobs:
         dotnet-version: 7.0.x
 
     - name: Restore NuGet Packages
-      run: dotnet restore ${{ env.APP_SOLUTION }} --locked-mode
+      run: dotnet restore ${{ env.APP_SOLUTION }}
 
     - name: Build Solution
       run: dotnet build ${{ env.APP_SOLUTION }} --configuration Release --no-restore --nologo
