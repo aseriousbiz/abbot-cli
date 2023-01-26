@@ -2,6 +2,7 @@ using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.Threading.Tasks;
 
+
 namespace Serious.IO.CommandLine.Commands
 {
     /// <summary>
@@ -26,7 +27,7 @@ namespace Serious.IO.CommandLine.Commands
             Console.Out.WriteLine($"Running abbot-cli version {GetVersion()}");
             var workspace = GetWorkspace(directory);
             var workingDir = workspace.WorkingDirectory.FullName;
-            
+
             if (!workspace.WorkingDirectory.Exists)
             {
                 Console.Out.WriteLine(Messages.Directory_Does_Not_Exist, workingDir);
@@ -65,7 +66,7 @@ namespace Serious.IO.CommandLine.Commands
 
             var organization = response.Content.Organization;
             var user = response.Content.User;
-            
+
             var status = @$"The directory {workingDir} is an authenticated Workspace.
 Organization: {organization.Name} ({organization.Platform} {organization.PlatformId})
 User: {user.Name} ({user.PlatformUserId})";
