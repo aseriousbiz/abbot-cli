@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Threading.Tasks;
+using Serious.Abbot.Messages;
 using Serious.IO.CommandLine.Commands;
-using Serious.IO.Messages;
 using UnitTests.Fakes;
 using Xunit;
 
@@ -17,12 +17,12 @@ public class RunCommandTests
         var parseResult = command.Parse("run test \"some args\" -d ./my-skills");
 
         var result = await command.Handler!.InvokeAsync(new InvocationContext(parseResult, context.FakeConsole));
-        
+
         Assert.Equal(1, result);
         var error = context.FakeConsole.Error.ToString();
         Assert.Equal("The specified directory is not an Abbot Workspace. Either specify the path to an Abbot Workspace, or initialize a new one using `abbot init`\n", error);
     }
-    
+
     [Fact]
     public async Task ReportsWhenSkillDirectoryDoesNotExist()
     {
@@ -33,12 +33,12 @@ public class RunCommandTests
         var parseResult = command.Parse("run test \"some args\" -d ./my-skills");
 
         var result = await command.Handler!.InvokeAsync(new InvocationContext(parseResult, context.FakeConsole));
-        
+
         Assert.Equal(1, result);
         var error = context.FakeConsole.Error.ToString();
         Assert.Equal("The skill directory ./my-skills/test does not exist. Have you run `abbot get test` yet? Or use the `--deployed` flag to run the deployed version of this skill on the server.\n", error);
     }
-    
+
     [Fact]
     public async Task RunsLocalSkill()
     {
@@ -53,12 +53,12 @@ public class RunCommandTests
         var parseResult = command.Parse("run test \"some args\" -d ./my-skills");
 
         var result = await command.Handler!.InvokeAsync(new InvocationContext(parseResult, context.FakeConsole));
-        
+
         Assert.Equal(0, result);
         var output = context.FakeConsole.Out.ToString();
         Assert.Equal("Hello, World!\n", output);
     }
-    
+
     [Fact]
     public async Task RunsDeployedSkillEvenWhenLocalDoesNotExist()
     {
@@ -71,7 +71,7 @@ public class RunCommandTests
         var parseResult = command.Parse("run test \"some args\" -d ./my-skills -s");
 
         var result = await command.Handler!.InvokeAsync(new InvocationContext(parseResult, context.FakeConsole));
-        
+
         Assert.Equal(0, result);
         var output = context.FakeConsole.Out.ToString();
         Assert.Equal("Hello, World!\n", output);

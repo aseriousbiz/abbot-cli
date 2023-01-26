@@ -4,8 +4,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Refit;
+using Serious.Abbot.Messages;
 using Serious.IO.CommandLine;
-using Serious.IO.Messages;
 
 namespace UnitTests.Fakes
 {
@@ -17,15 +17,15 @@ namespace UnitTests.Fakes
             {typeof(SkillRunResponse), new Dictionary<string, IApiResponse>()},
             {typeof(SkillUpdateResponse), new Dictionary<string, IApiResponse>()}
         };
-        
+
         readonly Dictionary<Type, IApiResponse> _apiResponses = new();
 
-        
+
         public void AddResponse<T>(IApiResponse<T> response)
         {
             _apiResponses.Add(typeof(T), response);
         }
-        
+
         public void AddResponse<T>(T responseBody)
         {
             IApiResponse<T> response = new ApiResponse<T>(new HttpResponseMessage(HttpStatusCode.OK), responseBody, new RefitSettings(), null);
@@ -52,7 +52,7 @@ namespace UnitTests.Fakes
         {
             return GetResponse<StatusGetResponse>();
         }
-        
+
         public Task<ApiResponse<SkillUpdateResponse>> DeploySkillAsync(string skill, SkillUpdateRequest updateRequest)
         {
             return GetResponse<SkillUpdateResponse>(skill);
@@ -76,13 +76,13 @@ namespace UnitTests.Fakes
         Task<ApiResponse<T>> GetResponse<T>(string skill)
         {
             var responses = _skillApiResponses[typeof(T)];
-            
+
             var response = responses.TryGetValue(skill, out var found)
                 ? found
                 : new ApiResponse<T>(new HttpResponseMessage(HttpStatusCode.NotFound), default(T), new RefitSettings(), null);
             return Task.FromResult((ApiResponse<T>)response);
         }
-        
+
         Task<ApiResponse<T>> GetResponse<T>()
         {
             var response = _apiResponses.TryGetValue(typeof(T), out var found)

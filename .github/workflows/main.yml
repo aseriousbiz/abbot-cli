@@ -27,18 +27,18 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout branch
       uses: actions/checkout@v2
-    
-    - name: Setup .NET 5
-      uses: actions/setup-dotnet@v1
+
+    - name: Setup .NET 7
+      uses: actions/setup-dotnet@v3.0.3
       with:
-        dotnet-version: 5.0.301
+        dotnet-version: 7.0.x
 
     - name: Restore NuGet Packages
-      run: dotnet restore ${{ env.APP_SOLUTION }} --locked-mode
+      run: dotnet restore ${{ env.APP_SOLUTION }}
 
     - name: Build Solution
       run: dotnet build ${{ env.APP_SOLUTION }} --configuration Release --no-restore --nologo

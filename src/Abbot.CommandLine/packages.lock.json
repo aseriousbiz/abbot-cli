@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    ".NETCoreApp,Version=v5.0": {
+    "net7.0": {
       "Microsoft.AspNetCore.DataProtection": {
         "type": "Direct",
         "requested": "[5.0.9, )",
@@ -143,11 +143,6 @@
           "Microsoft.NETCore.Platforms": "5.0.0"
         }
       },
-      "System.ComponentModel.Annotations": {
-        "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "dMkqfy2el8A8/I76n2Hi1oBFEbG1SfxD2l5nhwXV3XjlnOmwxJlQbYpJH4W51odnU9sARCSAgv7S3CyAFMkpYg=="
-      },
       "System.Drawing.Common": {
         "type": "Transitive",
         "resolved": "5.0.0",
@@ -228,20 +223,14 @@
           "System.Drawing.Common": "5.0.0"
         }
       },
-      "abbot.messages": {
-        "type": "Project",
-        "dependencies": {
-          "System.ComponentModel.Annotations": "5.0.0"
-        }
-      },
       "serious.io": {
         "type": "Project"
       },
       "serious.secrets": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.DataProtection.Abstractions": "5.0.9",
-          "Serious.IO": "0.2.6"
+          "Microsoft.AspNetCore.DataProtection.Abstractions": "[5.0.9, )",
+          "Serious.IO": "[0.3.0, )"
         }
       }
     }

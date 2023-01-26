@@ -2,8 +2,8 @@ using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.Threading.Tasks;
+using Serious.Abbot.Messages;
 using Serious.IO.CommandLine.Services;
-using Serious.IO.Messages;
 
 namespace Serious.IO.CommandLine.Commands
 {
@@ -26,7 +26,7 @@ namespace Serious.IO.CommandLine.Commands
             {
                 return string.Empty;
             }
-            
+
             var skillWorkspace = workspace.GetSkillWorkspace(skill);
 
             var codeResult = await skillWorkspace.GetCodeAsync();
@@ -35,14 +35,14 @@ namespace Serious.IO.CommandLine.Commands
                 Console.Error.WriteLine(codeResult.ErrorMessage ?? "Unknown error occurred");
                 return null;
             }
-            
+
             return codeResult.Code!;
         }
 
         async Task<int> HandleRunCommandAsync(string skill, string arguments, string? directory, bool deployed)
         {
             var workspace = GetWorkspace(directory);
-            
+
             if (!workspace.IsInitialized)
             {
                 return HandleUninitializedWorkspace(workspace);
@@ -67,11 +67,11 @@ namespace Serious.IO.CommandLine.Commands
             };
 
             var client = CreateApiClient(workspace);
-            
+
             var response = await (deployed
                 ? client.RunDeployedSkillAsync(skill, runRequest)
                 : client.RunSkillAsync(skill, runRequest));
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 return await response.HandleUnsuccessfulResponseAsync();

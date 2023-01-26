@@ -1,4 +1,4 @@
-using Serious.IO.Entities;
+using Serious.Abbot.Messages;
 
 namespace Serious.IO.CommandLine
 {

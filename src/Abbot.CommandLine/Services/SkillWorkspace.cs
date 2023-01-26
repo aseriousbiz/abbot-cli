@@ -4,14 +4,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Serious.Abbot.Messages;
 using Serious.IO.CommandLine.Editors;
-using Serious.IO.Entities;
-using Serious.IO.Messages;
 
 namespace Serious.IO.CommandLine.Services
 {
     /// <summary>
-    /// A workspace for an Abbot skill. This is a directory within an Abbot <see cref="Workspace" /> 
+    /// A workspace for an Abbot skill. This is a directory within an Abbot <see cref="Workspace" />
     /// </summary>
     public class SkillWorkspace
     {
@@ -102,7 +101,7 @@ namespace Serious.IO.CommandLine.Services
                 : code;
             return codeFile.WriteAllTextAsync(contents);
         }
-        
+
         /// <summary>
         /// Returns true if the local code for the skill has local changes.
         /// </summary>
@@ -114,7 +113,7 @@ namespace Serious.IO.CommandLine.Services
             {
                 return false;
             }
-            
+
             var existingCode = await codeFile.ReadAllTextAsync();
             if (existingCode is null)
             {
@@ -183,7 +182,9 @@ namespace Serious.IO.CommandLine.Services
         {
             // Using this for checksums
 #pragma warning disable CA5350
+#pragma warning disable SYSLIB0021
             using var sha1 = new SHA1Managed();
+#pragma warning restore SYSLIB0021
 #pragma warning restore CA5350
             var encoded = sha1.ComputeHash(Encoding.UTF8.GetBytes(value));
             return Convert.ToBase64String(encoded);

@@ -2,8 +2,8 @@ using System.CommandLine.Invocation;
 using System.CommandLine.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Serious.Abbot.Messages;
 using Serious.IO.CommandLine.Services;
-using Serious.IO.Messages;
 
 namespace Serious.IO.CommandLine.Commands
 {
@@ -51,7 +51,7 @@ namespace Serious.IO.CommandLine.Commands
             {
                 return 1;
             }
-            
+
             if (get)
             {
                 foreach (var skillInfo in response.Results)

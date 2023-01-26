@@ -100,9 +100,5 @@ Sometimes you want to continuously test a skill. You can run a skill in a REPL (
 
 ## Development
 
-This is a .NET 5 Console project.
+This is a .NET 7 Console project.
 
-The `Abbot.Messages` project is in a [Git Subtree](https://www.atlassian.com/git/tutorials/git-subtree). For the most part, you shouldn't have to worry about it.
-However, if you make changes to `Abbot.Messages` from here, you'll want to push those changes upstream via `script/push-subtree`.
-
-If for some reason changes were made directly to `Abbot.Messages`, you can pull those changes via `script/pull-subtree`.
