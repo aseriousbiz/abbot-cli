@@ -4,13 +4,14 @@
     ".NETStandard,Version=v2.1": {
       "Microsoft.AspNetCore.DataProtection.Abstractions": {
         "type": "Direct",
-        "requested": "[5.0.9, )",
-        "resolved": "5.0.9",
-        "contentHash": "tDcurs0meZytXW0/Fw6i8kfG4zpw9rqetQAPh9DWFDbUivyJLrseQKf69ZhynWnUOBut057B26brDQt63xQywA=="
+        "requested": "[7.0.2, )",
+        "resolved": "7.0.2",
+        "contentHash": "fG7yxz9hFPcgOpSXmZbGk0VFFXpXwoXMGBwPa/d98GhpZNnBmHJv/PRb4VPK4rEqqd8wkUq1OAnzmHNO76BpOA=="
       },
       "serious.io": {
         "type": "Project"
       }
-    }
+    },
+    ".NETStandard,Version=v2.1/linux-x64": {}
   }
 }
