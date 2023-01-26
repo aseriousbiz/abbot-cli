@@ -102,3 +102,10 @@ Sometimes you want to continuously test a skill. You can run a skill in a REPL (
 
 This is a .NET 7 Console project.
 
+## Publishing a New Release
+
+This project has a manual `workflow_dispatch` trigger used to publish new releases. Go to [the Actions tab](https://github.com/aseriousbiz/abbot-cli/actions/workflows/main.yml) and initiate the trigger by specifying the branch to use (typically `main`) and the tag to create
+
+![image](https://user-images.githubusercontent.com/19977/214905401-75617354-47e3-4df1-9981-56883a1a8f1b.png)
+
+The Publish Artifacts field is a boolean (0 = false, 1 = true).
