@@ -1,4 +1,3 @@
-using Serious.IO;
 using Serious.IO.CommandLine.Services;
 
 namespace Serious.IO.CommandLine

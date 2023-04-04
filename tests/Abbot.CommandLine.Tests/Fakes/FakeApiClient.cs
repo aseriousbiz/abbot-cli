@@ -28,7 +28,10 @@ namespace UnitTests.Fakes
 
         public void AddResponse<T>(T responseBody)
         {
-            IApiResponse<T> response = new ApiResponse<T>(new HttpResponseMessage(HttpStatusCode.OK), responseBody, new RefitSettings(), null);
+            IApiResponse<T> response = new ApiResponse<T>(
+                new HttpResponseMessage(HttpStatusCode.OK),
+                responseBody,
+                new RefitSettings());
             _apiResponses.Add(typeof(T), response);
         }
 
@@ -39,7 +42,10 @@ namespace UnitTests.Fakes
 
         public void AddResponse<T>(string skill, T responseBody)
         {
-            IApiResponse<T> response = new ApiResponse<T>(new HttpResponseMessage(HttpStatusCode.OK), responseBody, new RefitSettings(), null);
+            IApiResponse<T> response = new ApiResponse<T>(
+                new HttpResponseMessage(HttpStatusCode.OK),
+                responseBody,
+                new RefitSettings());
             AddResponse(skill, response);
         }
 
@@ -73,13 +79,21 @@ namespace UnitTests.Fakes
             return GetResponse<SkillListResponse>();
         }
 
+        public Task<ApiResponse<object?>> GetInsightsExportAsync()
+        {
+            return Task.FromResult(new ApiResponse<object?>(
+                new HttpResponseMessage(HttpStatusCode.NotFound),
+                default,
+                new RefitSettings()));
+        }
+
         Task<ApiResponse<T>> GetResponse<T>(string skill)
         {
             var responses = _skillApiResponses[typeof(T)];
 
             var response = responses.TryGetValue(skill, out var found)
                 ? found
-                : new ApiResponse<T>(new HttpResponseMessage(HttpStatusCode.NotFound), default(T), new RefitSettings(), null);
+                : new ApiResponse<T>(new HttpResponseMessage(HttpStatusCode.NotFound), default(T), new RefitSettings());
             return Task.FromResult((ApiResponse<T>)response);
         }
 
@@ -87,7 +101,7 @@ namespace UnitTests.Fakes
         {
             var response = _apiResponses.TryGetValue(typeof(T), out var found)
                 ? found
-                : new ApiResponse<T>(new HttpResponseMessage(HttpStatusCode.NotFound), default(T), new RefitSettings(), null);
+                : new ApiResponse<T>(new HttpResponseMessage(HttpStatusCode.NotFound), default(T), new RefitSettings());
             return Task.FromResult((ApiResponse<T>)response);
         }
     }
