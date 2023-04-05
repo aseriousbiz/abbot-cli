@@ -36,7 +36,8 @@ namespace Serious.IO.CommandLine
                 new ListCommand(context),
                 new ReplCommand(context, runCommand),
                 runCommand,
-                new StatusCommand(context)
+                new StatusCommand(context),
+                new ExportCommand(context),
             };
 
             rootCommand.Description = "Abbot command line. Use this to set up a local Abbot Workspace. To get started, run `abbot auth` in a directory where you want to edit skills.";

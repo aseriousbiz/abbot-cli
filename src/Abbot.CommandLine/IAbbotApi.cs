@@ -60,5 +60,11 @@ namespace Serious.IO.CommandLine
             SkillOrderBy orderBy,
             OrderDirection direction,
             bool includeDisable = false);
+
+        /// <summary>
+        /// Exports all of the Insights conversation data.
+        /// </summary>
+        [Get("/api/export/insights")]
+        Task<ApiResponse<object>> GetInsightsExportAsync();
     }
 }
