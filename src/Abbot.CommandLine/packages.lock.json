@@ -183,7 +183,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.DataProtection.Abstractions": "[7.0.2, )",
-          "Serious.IO": "[0.3.1, )"
+          "Serious.IO": "[0.3.2, )"
         }
       }
     },

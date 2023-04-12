@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <SemVersion>0.3.1</SemVersion>
+        <SemVersion>0.3.2</SemVersion>
         <LangVersion>11.0</LangVersion>
         <Company>A Serious Business, Inc.</Company>
         <Copyright>Copyright © 2023</Copyright>
